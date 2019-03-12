@@ -33,10 +33,5 @@ namespace ShinraCo.Rotations
         {
             return false;
         }
-
-        public override async Task<bool> PreCombatBuffPVP()
-        {
-            return false;
-        }
     }
 }

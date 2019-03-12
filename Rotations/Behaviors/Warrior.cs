@@ -11,7 +11,11 @@ namespace ShinraCo.Rotations
         {
             if (Shinra.Settings.RotationMode == Modes.Smart)
             {
-                if (Shinra.Settings.WarriorOpener) { if (await Helpers.ExecuteOpener()) return true; }
+                if (Shinra.Settings.WarriorOpener)
+                {
+                    if (await Helpers.ExecuteOpener()) return true;
+                }
+
                 if (await Decimate()) return true;
                 if (await SteelCyclone()) return true;
                 if (await FellCleave()) return true;
@@ -24,9 +28,14 @@ namespace ShinraCo.Rotations
                 if (await SkullSunder()) return true;
                 return await HeavySwing();
             }
+
             if (Shinra.Settings.RotationMode == Modes.Single)
             {
-                if (Shinra.Settings.WarriorOpener) { if (await Helpers.ExecuteOpener()) return true; }
+                if (Shinra.Settings.WarriorOpener)
+                {
+                    if (await Helpers.ExecuteOpener()) return true;
+                }
+
                 if (await FellCleave()) return true;
                 if (await InnerBeast()) return true;
                 if (await StormsEye()) return true;
@@ -36,6 +45,7 @@ namespace ShinraCo.Rotations
                 if (await SkullSunder()) return true;
                 return await HeavySwing();
             }
+
             if (Shinra.Settings.RotationMode == Modes.Multi)
             {
                 if (await Decimate()) return true;
@@ -46,6 +56,7 @@ namespace ShinraCo.Rotations
                 if (await Maim()) return true;
                 return await HeavySwing();
             }
+
             return false;
         }
 
@@ -57,7 +68,11 @@ namespace ShinraCo.Rotations
         {
             if (await Shinra.SummonChocobo()) return true;
             if (await Shinra.ChocoboStance()) return true;
-            if (Shinra.Settings.WarriorOpener) { if (await Helpers.ExecuteOpener()) return true; }
+            if (Shinra.Settings.WarriorOpener)
+            {
+                if (await Helpers.ExecuteOpener()) return true;
+            }
+
             if (await Deliverance()) return true;
             if (await Defiance()) return true;
             if (await ThrillOfBattle()) return true;
@@ -111,15 +126,6 @@ namespace ShinraCo.Rotations
         #region CombatPVP
 
         public override async Task<bool> CombatPVP()
-        {
-            return false;
-        }
-
-        #endregion
-
-        #region PreCombatBuffPVP
-
-        public override async Task<bool> PreCombatBuffPVP()
         {
             return false;
         }

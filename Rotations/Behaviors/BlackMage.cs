@@ -14,12 +14,17 @@ namespace ShinraCo.Rotations
             {
                 return await Multi();
             }
+
             return await Single();
         }
 
         private async Task<bool> Single()
         {
-            if (Shinra.Settings.BlackMageOpener) { if (await Helpers.ExecuteOpener()) return true; }
+            if (Shinra.Settings.BlackMageOpener)
+            {
+                if (await Helpers.ExecuteOpener()) return true;
+            }
+
             if (await Transpose()) return true;
             if (await Triplecast()) return true;
             if (await Swiftcast()) return true;
@@ -62,7 +67,11 @@ namespace ShinraCo.Rotations
         {
             if (await Shinra.SummonChocobo()) return true;
             if (await Shinra.ChocoboStance()) return true;
-            if (Shinra.Settings.BlackMageOpener) { if (await Helpers.ExecuteOpener()) return true; }
+            if (Shinra.Settings.BlackMageOpener)
+            {
+                if (await Helpers.ExecuteOpener()) return true;
+            }
+
             if (await Convert()) return true;
             if (await Enochian()) return true;
             if (await LeyLines()) return true;
@@ -111,15 +120,6 @@ namespace ShinraCo.Rotations
             if (await FirePVP()) return true;
             if (await BlizzardIVPVP()) return true;
             return await BlizzardPVP();
-        }
-
-        #endregion
-
-        #region PreCombatBuffPVP
-
-        public override async Task<bool> PreCombatBuffPVP()
-        {
-            return false;
         }
 
         #endregion

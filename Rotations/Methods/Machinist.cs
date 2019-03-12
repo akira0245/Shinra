@@ -481,21 +481,6 @@ namespace ShinraCo.Rotations
 
         #endregion
 
-        #region PreCombatBuffPVP
-
-        private async Task<bool> QuickReloadPrePVP()
-        {
-            if (!Core.Player.HasAura(MySpells.Flamethrower.Name)
-                && Resource.GaussBarrel && Resource.Ammo < 3 && Resource.Heat >= 50)
-            {
-                return await MySpells.PVP.QuickReload.Cast();
-            }
-
-            return false;
-        }
-
-        #endregion
-
         #region Custom
 
         private static int AoECount => Shinra.Settings.CustomAoE ? Shinra.Settings.CustomAoECount : 3;

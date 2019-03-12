@@ -99,14 +99,5 @@ namespace ShinraCo.Rotations
         }
 
         #endregion
-
-        #region PreCombatBuffPVP
-
-        public override async Task<bool> PreCombatBuffPVP()
-        {
-            return false;
-        }
-
-        #endregion
     }
 }

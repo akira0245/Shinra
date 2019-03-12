@@ -10,7 +10,6 @@ namespace ShinraCo.Rotations
         Task<bool> PreCombatBuff();
         Task<bool> Pull();
         Task<bool> CombatPVP();
-        Task<bool> PreCombatBuffPVP();
     }
 
     public abstract class Rotation : IRotation
@@ -21,7 +20,5 @@ namespace ShinraCo.Rotations
         public abstract Task<bool> PreCombatBuff();
         public abstract Task<bool> Pull();
         public abstract Task<bool> CombatPVP();
-        public abstract Task<bool> PreCombatBuffPVP();
-
     }
 }
