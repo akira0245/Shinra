@@ -8185,7 +8185,7 @@
             this.MachinistWildfire.Size = new System.Drawing.Size(64, 17);
             this.MachinistWildfire.TabIndex = 0;
             this.MachinistWildfire.TabStop = false;
-            this.MachinistWildfire.Text = "野火  (敌人血量小于此值则不发动>>)";
+            this.MachinistWildfire.Text = "野火、伏击止步  (敌人血量小于此值则不发动>>)";
             this.MachinistWildfire.UseVisualStyleBackColor = true;
             this.MachinistWildfire.CheckedChanged += new System.EventHandler(this.MachinistWildfire_CheckedChanged);
             // 

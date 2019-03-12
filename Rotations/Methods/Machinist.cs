@@ -443,21 +443,10 @@ namespace ShinraCo.Rotations
             return false;
         }
 
-        private async Task<bool> QuickReloadPrePVP()
-        {
-            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) 
-                && Resource.GaussBarrel && Resource.Ammo < 3 && Resource.Heat >= 50
-                && !Core.Player.HasTarget)
-            {
-                return await MySpells.PVP.QuickReload.Cast();
-            }
-
-            return false;
-        }
         private async Task<bool> BetweentheEyesPVP()
         {
-            if (Core.Player.CurrentTarget.HasAura(1343) ||
-                Core.Player.CurrentTarget.HasAura(1345) &&
+            if ((Core.Player.CurrentTarget.HasAura(1343) ||
+                Core.Player.CurrentTarget.HasAura(1345) && Shinra.Settings.MachinistWildfire ) &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "狼心" &&
                 Core.Player.CurrentTarget.Name != "木人")
@@ -484,7 +473,22 @@ namespace ShinraCo.Rotations
             var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
             if (target != null)
             {
-                return await MySpells.PVP.Blank.Cast(target, false);
+                return await MySpells.PVP.Blank.Cast(target);
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region PreCombatBuffPVP
+
+        private async Task<bool> QuickReloadPrePVP()
+        {
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name)
+                && Resource.GaussBarrel && Resource.Ammo < 3 && Resource.Heat >= 50)
+            {
+                return await MySpells.PVP.QuickReload.Cast();
             }
 
             return false;

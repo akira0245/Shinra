@@ -38,5 +38,19 @@ namespace ShinraCo
             }
             return c.IsDPS() ? 20 : c.IsTank() ? 10 : 0;
         }
+
+        public static IEnumerable<BattleCharacter> TheBlackestNightTarget
+        {
+            get
+            {
+                return PartyMembers.Where(pm => pm.InCombat && pm.IsAlive && pm.Distance(Core.Player) < 30)
+                    .OrderByDescending(Importance);
+            }
+        }
+
+        private static int Importance(BattleCharacter c)
+        {
+            return c.IsHealer() ? 60 : c.IsDPS() ? 50 : c.IsTank() ? 40 : 0;
+        }
     }
 }

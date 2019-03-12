@@ -199,12 +199,14 @@ namespace ShinraCo
         {
             get
             {
-                return new Decorator(r => Core.Player.HasTarget,
-                                     new PrioritySelector(new Decorator(r => WorldManager.InPvP, new ActionRunCoroutine(ctx => MyRotation.CombatPVP())),
-                                                          new Decorator(r => !WorldManager.InPvP, new ActionRunCoroutine(ctx => MyRotation.Combat()))));
+                return new Decorator(context => Core.Player.HasTarget,
+                    new PrioritySelector(
+                        new Decorator(context => WorldManager.InPvP, 
+                            new ActionRunCoroutine(arg => MyRotation.CombatPVP())),
+                        new Decorator(context => !WorldManager.InPvP, 
+                            new ActionRunCoroutine(arg => MyRotation.Combat()))));
             }
         }
-
 
         public override Composite CombatBuffBehavior
         {
@@ -222,16 +224,7 @@ namespace ShinraCo
         }
 
         public override Composite HealBehavior { get { return new ActionRunCoroutine(ctx => MyRotation.Heal()); } }
-
-        public override Composite PreCombatBuffBehavior
-        {
-            get
-            {
-                return new Decorator (new PrioritySelector(
-                    new Decorator(r => WorldManager.InPvP, new ActionRunCoroutine(ctx => MyRotation.PreCombatBuffPVP())),
-                    new Decorator(r => !WorldManager.InPvP, new ActionRunCoroutine(ctx => MyRotation.PreCombatBuff()))));
-            }
-        }
+        public override Composite PreCombatBuffBehavior { get { return new ActionRunCoroutine(ctx => MyRotation.PreCombatBuff()); } }
         public override Composite RestBehavior { get { return new ActionRunCoroutine(ctx => Rest()); } }
 
         #endregion

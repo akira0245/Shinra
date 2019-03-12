@@ -367,11 +367,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TheBlackestNightPVP()
         {
-            var target = Helpers.HealManager.FirstOrDefault(hm => hm.CurrentHealthPercent < 60);
-
-            if (target != null)
+            var target = Managers.TheBlackestNightTarget.FirstOrDefault();
+            if (target != null && target.CurrentHealthPercent < 65)
             {
-                return await MySpells.PVP.TheBlackestNight.Cast(target, false);
+                return await MySpells.PVP.TheBlackestNight.Cast(target,false);
             }
 
             return false;
@@ -382,7 +381,7 @@ namespace ShinraCo.Rotations
             var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
             if (target != null && !target.HasAura(1349))
             {
-                return await MySpells.PVP.LowBlow.Cast(target, false);
+                return await MySpells.PVP.LowBlow.Cast(target);
             }
 
             return false;
@@ -393,7 +392,7 @@ namespace ShinraCo.Rotations
             var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
             if (target != null && (target.HasAura(1349) || target.Distance() > 3))
             {
-                return await MySpells.PVP.Unmend.Cast(target, false);
+                return await MySpells.PVP.Unmend.Cast(target);
             }
 
             return false;
