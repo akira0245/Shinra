@@ -1,0 +1,231 @@
+
+Shinra v1.4.8 
+BRD:
++ Improved Barrage usage.
++ Improved Mage's Ballad usage.
++ Improved Pitch Perfect usage.
+
+DRK:
++ Improved Dark Arts usage.
++ Improved Delirium usage.
++ Added an option to cast Blackest Night on the other tank during the opener.
+
+MCH:
++ Improved Cooldown usage.
+
+NIN:
++ Improved Duality usage.
+
+SMN:
++ Added Tri-bind.
++ Improved Ruin II usage.
++ Improved opener.
++ Fixed dots being hard-casted during Summon Bahamut.
+
+Shinra v1.4.7 
+Healers:
++ Swiftcast is now saved exclusively for resses.
++ Fixed issues with PotD at low levels.
+
+BRD:
++ Added an option for dot snapshotting.
++ Fixed dots being snapshotted during crit buffs even if previous damage buffs would be lost.
+
+MNK:
++ Fixed potions being used a step too early during the opener.
+
+WAR:
++ Fixed Inner Release not being used at the end of the GCD during the opener.
+
+
+Shinra v1.4.6 
+BRD:
++ Added a mana percent option for Foe Requiem.
++ Added Dragon Sight and Hypercharge to snapshotting.
++ Fixed Trick Attack not being detected when snapshotting.
+
+MCH:
++ Reload and Quick Reload are now used immediately if they will not be wasted.
++ Hot Shot is now refreshed while Gauss Barrel is down after an overheat.
+
+MNK:
++ Improved Riddle of Wind usage during the opener.
++ Reduced the required time for off-gcds.
++ Forbidden Chakra is now used immediately to avoid wasting procs.
++ Fixed Fists being used while Riddle of Earth is up.
+
+ Shinra v1.4.5 
++ Added toast messages for openers.
+
+BRD:
++ Improved dot snapshotting.
+
+MNK:
++ Added opener (http://ffxivrotations.com/1n90).
++ Form Shift and Meditation are now used pre-combat.
+
+NIN:
++ Fixed Ninjutsu not being used below level 45.
+
+PLD:
++ Improved usage of Requiescat.
+
+SMN:
++ Improved usage of off-GCDs.
++ Increased Miasma refresh time to 5 seconds.
+
+WAR:
++ Added opener (http://ffxivrotations.com/1ndw).
++ Improved usage of Fell Cleave and Storm's Eye.
+
+Shinra v1.4.4 
+BRD:
++ Improved dot snapshotting.
+
+DRG:
++ Added opener (http://ffxivrotations.com/1n4g).
+
+DRK:
++ Added opener (http://ffxivrotations.com/1n71).
+
+NIN:
++ Added opener (http://ffxivrotations.com/1n4l).
++ Improved the usage of Duality.
++ Improved the usage of Ninjutsu.
+
+SAM:
++ Added opener (http://ffxivrotations.com/1n4e).
++ Improved the usage of Hagakure.
++ Improved the usage of Hissatsu: Kaiten.
+
+
+ Shinra v1.4.3 
++ Improved opener logic.
++ Fixed openers getting stuck under certain circumstances.
+
+BRD:
++ Updated opener.
++ Added dot snapshotting.
++ Added two new options to configure the usage of dots.
++ Improved the reliability of Barrage.
+
+DRG:
++ Added Dragon Sight.
+
+MCH:
++ Fixed Cooldown being delayed sometimes.
++ Fixed Gauss Round not being saved for Wildfire when the sync option is enabled.
++ Fixed Quick Reload and Reload being used immediately after one another.
+
+SCH:
++ Added Energy Drain (used when Aetherflow is ready and mana is below the configured %).
+
+
+ Shinra v1.4.2 
++ Improved logging for PVP abilities.
+
+Healers:
++ Added Eye for an Eye/Largesse.
+
+AST:
++ Added Celestial Opposition/Lightspeed/Synastry/Time Dilation.
++ Added an option to configure Stellar Detonation.
++ Added an option to use cards pre-combat.
++ Improved card logic.
+- Removed the card buff style option to reduce code complexity.
+Credit to Ray for these ideas.
+
+BRD:
++ Added Foe Requiem.
+
+SAM:
++ Added options to configure Merciful Eyes.
++ Added PVP rotation.
+
+SMN:
++ Added PVP rotation.
+
+WHM:
++ Added options to configure Presence of Mind.
+
+Shinra v1.4.1 
++ Added a temporary workaround for CanAttack issue v3.0 electric boogaloo.
+
+
+ Shinra v1.4.0 
++ Fixed Eureka bosses not being attacked. 修正4.25尤蕾卡点击boss不攻击问题
+
+Shinra v1.3.9 
+BLM:
++ Improved the opener. (http://ffxivrotations.com/1dlp)
++ Improved Sharpcast/Triplecast/Swiftcast usage.
++ Thundercloud is now used during Astral Fire when close to expiring.
++ Increased the refresh time for Thunder III during Umbral Ice to 12 seconds.
+
+BRD:
++ Fixed Refulgent Arrow not being used if "Queue spells" was enabled.
+
+PLD:
++ Fixed Spirits Within and Circle of Scorn being skipped during the Holy Spirit phase.
++ Fixed Requiescat being used if Goring Blade was close to expiring.
+
+Shinra v1.3.8
+BRD:
++ Changed Barrage to be used for Refulgent Arrow more consistently.
++ Changed Raging Strikes to be used only during Wanderer's Minuet.
++ Changed Straight Shot to be refreshed earlier.
++ Fixed Stormbite being used repeatedly.
++ Fixed Refulgent Arrow being used when unavailable.
+
+SMN:
++ Changed Bio/Miasma to not be used when Tri-Disaster is almost off cooldown. 
+
+Shinra v1.3.7b 
+BRD:
++ Fixed Stormbite being used repeatedly.
+
+Shinra v1.3.7 
+BLM:
++ Added PVP rotation.
+
+BRD:
++ Added crit buff snapshotting.
+
+MNK:
++ Changed the required time for off-gcds to avoid clipping.
++ Changed Demolish, Dragon Kick and Twin Snakes to be refreshed earlier.
++ Fixed Snap Punch not being used during Perfect Balance to keep Greased Lightning up.
+
+RDM:
++ Fixed Scatter not being used at low levels.
+
+WHM:
++ Fixed Thin Air not being saved for Holy.
+
+ Shinra v1.3.6 
++ Grade 2 Infusions are now used during openers when possible.
+
+Healers:
++ Added two new options "Stop damage at low mana" and "Stop dots at low mana". When enabled damage/dot spells will be disabled when mana is below the configured percent. Setting these options to 100% will disable damage/dot spells entirely.
+
+AST:
++ Added a new option "Card only mode". When enabled only card abilities will be cast, damage and healing will be disabled.
++ Changed card logic. Bole/Ewer/Spire should now be used when appropriate.
+
+BRD:
++ Added an option for Empyreal Arrow.
++ Changed Pitch Perfect to be cast automatically at 2+ stacks when a crit buff is active.
+
+MCH:
++ Changed "Sync cooldowns with Wildfire" to save Slug/Clean Shot procs if Wildfire is almost ready.
+
+RDM:
++ Fixed Verflare not being used under specific circumstances.
+
+Shinra v1.3.5 
+MNK:
++ Added PVP rotation.
+
+WAR:
++ Changed Inner Release usage to account for 4.2 changes.
++ Fixed Inner Release still being used if it was disabled in the settings.
