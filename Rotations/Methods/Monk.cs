@@ -311,7 +311,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SomersaultPVP()
         {
-            if (Core.Player.CurrentTP > 700 && Resource.FithChakra < 5)
+            if (((Core.Player.CurrentTP > 400 || Core.Player.CurrentTarget.CurrentHealth < 4000) && (Resource.FithChakra < 5)) || (Core.Player.CurrentTarget.CurrentHealth < 1100))
             {
                 return await MySpells.PVP.Somersault.Cast();
             }
@@ -320,7 +320,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TheForbiddenChakraPVP()
         {
-            if (Resource.FithChakra == 5)
+            if (Resource.GreasedLightning == 3 && Resource.FithChakra == 5 && Core.Player.CurrentTarget.CurrentHealth < 2200 || Core.Player.HasAura(MySpells.RiddleOfFire.Name) && (Core.Player.CurrentTarget.Name != "奋战补给箱"))
             {
                 return await MySpells.PVP.TheForbiddenChakra.Cast();
             }
@@ -338,22 +338,36 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TornadoKickPVP()
         {
-            if (Resource.GreasedLightning == 3 && Core.Player.CurrentTarget.CurrentHealthPercent < 20)
+            if (Resource.GreasedLightning == 3 && (Core.Player.CurrentTarget.CurrentHealth < 2700 || Core.Player.HasAura(MySpells.RiddleOfFire.Name)) && (Core.Player.CurrentTarget.Name != "奋战补给箱"))
             {
-                if (ActionManager.GetPvPComboCurrentActionId(MySpells.PVP.SnapPunch.Combo) == MySpells.PVP.SnapPunch.ID ||
-                    ActionManager.GetPvPComboCurrentActionId(MySpells.PVP.Demolish.Combo) == MySpells.PVP.Demolish.ID)
-                {
-                    return await MySpells.PVP.TornadoKick.Cast();
-                }
+                return await MySpells.PVP.TornadoKick.Cast();
             }
             return false;
         }
 
-        private async Task<bool> RiddleOfFirePVP()
+        private async Task<bool> WindTacklePVP()
         {
-            if ((Resource.FithChakra >= 4 || Resource.GreasedLightning == 3) && Core.Player.TargetDistance(5, false))
+            if (Core.Player.CurrentTarget.CurrentHealth < 1500 || Core.Player.HasAura(MySpells.RiddleOfFire.Name))
             {
-                return await MySpells.PVP.RiddleOfFire.Cast();
+                return await MySpells.PVP.WindTackle.Cast();
+            }
+            return false;
+        }
+
+        private async Task<bool> RiddleOfWindPVP()
+        {
+            if (Core.Player.CurrentTarget.CurrentHealth < 1500 || Core.Player.HasAura(MySpells.RiddleOfFire.Name))
+            {
+                return await MySpells.PVP.RiddleOfWind.Cast();
+            }
+            return false;
+        }
+
+        private async Task<bool> EnlivenPVP()
+        {
+            if (Core.Player.CurrentTP < 450)
+            {
+                return await MySpells.Adventurer.Enliven.Cast();
             }
             return false;
         }

@@ -76,5 +76,23 @@
             SpellType = SpellType.Buff,
             CastType = CastType.Self
         };
+
+        public Spell WindTackle { get; } = new Spell
+        {
+            Name = "Wind Tackle",
+            ID = 8787,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Cooldown,
+            CastType = CastType.Target
+        };
+
+        public Spell RiddleOfWind { get; } = new Spell
+        {
+            Name = "Riddle of Wind",
+            ID = 9098,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Cooldown,
+            CastType = CastType.Target
+        };
     }
 }

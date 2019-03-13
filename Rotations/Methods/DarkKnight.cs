@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
 using ff14bot.Managers;
@@ -317,6 +318,76 @@ namespace ShinraCo.Rotations
             {
                 return await MySpells.Role.Awareness.Cast();
             }
+            return false;
+        }
+
+        #endregion
+
+        #region PVP
+
+        private async Task<bool> SouleaterPVP()
+        {
+            return await MySpells.PVP.Souleater.Cast();
+        }
+
+        private async Task<bool> PowerSlashPVP()
+        {
+            if (!Core.Player.CurrentTarget.HasAura(MySpells.PowerSlash.Name, true, 6000) &&
+                Core.Player.CurrentHealthPercent > 60 &&
+                Core.Player.CurrentManaPercent > 50 &&
+                BloodValue > 50 &&
+                ActionManager.LastSpell.Name != MySpells.PVP.SyphonStrike.Name &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "狼心")
+            {
+                return await MySpells.PVP.PowerSlash.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> BloodspillerPVP()
+        {
+            if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "狼心")
+            {
+                return await MySpells.PVP.Bloodspiller.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> TheBlackestNightPVP()
+        {
+            var target = Managers.TheBlackestNightTarget.FirstOrDefault();
+            if (target != null && target.CurrentHealthPercent < 65)
+            {
+                return await MySpells.PVP.TheBlackestNight.Cast(target, false);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> LowBlowPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
+            if (target != null && !target.HasAura(1349))
+            {
+                return await MySpells.PVP.LowBlow.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> UnmendPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
+            if (target != null && (target.HasAura(1349) || target.Distance() > 3))
+            {
+                return await MySpells.PVP.Unmend.Cast(target);
+            }
+
             return false;
         }
 

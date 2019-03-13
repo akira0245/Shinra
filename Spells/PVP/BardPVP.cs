@@ -2,6 +2,16 @@
 {
     public class BardPVP
     {
+        public Spell HeavyShot { get; } = new Spell
+        {
+            Name = "Heavy Shot",
+            ID = 8834,
+            Combo = 16,
+            GCDType = GCDType.On,
+            SpellType = SpellType.PVP,
+            CastType = CastType.Target
+        };
+
         public Spell StraightShot { get; } = new Spell
         {
             Name = "Straight Shot",
@@ -47,15 +57,6 @@
             GCDType = GCDType.Off,
             SpellType = SpellType.Cooldown,
             CastType = CastType.Target
-        };
-
-        public Spell Barrage { get; } = new Spell
-        {
-            Name = "Barrage",
-            ID = 9625,
-            GCDType = GCDType.Off,
-            SpellType = SpellType.Buff,
-            CastType = CastType.Self
         };
 
         public Spell WanderersMinuet { get; } = new Spell

@@ -107,9 +107,15 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
-            return false;
+            if (await UnmendPVP()) return true;
+            if (await LowBlowPVP()) return true;
+            if (await TheBlackestNightPVP()) return true;
+            if (await BloodspillerPVP()) return true;
+            if (await PowerSlashPVP()) return true;
+            return await SouleaterPVP();
         }
 
         #endregion
+
     }
 }

@@ -105,5 +105,14 @@
             SpellType = SpellType.Cooldown,
             CastType = CastType.Target
         };
+
+        public Spell PiercingTalon { get; } = new Spell
+        {
+            Name = "PiercingTalon",
+            ID = 8799,
+            GCDType = GCDType.On,
+            SpellType = SpellType.Damage,
+            CastType = CastType.Target
+        };
     }
 }

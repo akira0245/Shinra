@@ -238,7 +238,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> EmpyrealArrow()
         {
-            if (Shinra.Settings.BardEmpyrealArrow && DataManager.GetSpellData(MySpells.RagingStrikes.ID).Cooldown.TotalSeconds > 12)
+            if (Shinra.Settings.BardEmpyrealArrow)
             {
                 return await MySpells.EmpyrealArrow.Cast();
             }
@@ -395,8 +395,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> StormbitePVP()
         {
-            if (!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 4000) ||
-                !Core.Player.CurrentTarget.HasAura("Stormbite", true, 4000))
+            if (((!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 4000) || !Core.Player.CurrentTarget.HasAura("Stormbite", true, 4000)))
+                && (ActionManager.LastSpell.Name != MySpells.PVP.HeavyShot.Name)
+                && ((Core.Player.CurrentTarget.Name != "奋战补给箱") || ((Core.Player.CurrentTarget.Name == "奋战补给箱") && (Core.Player.CurrentTarget.CurrentHealthPercent > 70))))
             {
                 return await MySpells.PVP.Stormbite.Cast();
             }
@@ -405,7 +406,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SidewinderPVP()
         {
-            if (Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 1000) && Core.Player.CurrentTarget.HasAura("Stormbite", true, 1000))
+            if ((Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 1000) && Core.Player.CurrentTarget.HasAura("Stormbite", true, 1000)
+                && (Core.Player.CurrentTarget.CurrentHealth < 1950)) && (Core.Player.CurrentTarget.Name != "奋战补给箱"))
             {
                 return await MySpells.PVP.Sidewinder.Cast();
             }
@@ -414,12 +416,21 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> EmpyrealArrowPVP()
         {
-            return await MySpells.PVP.EmpyrealArrow.Cast();
+            if ((Core.Player.HasAura(MySpells.Barrage.Name)) || (Core.Player.CurrentTarget.CurrentHealth < 1450))
+            {
+                return await MySpells.PVP.EmpyrealArrow.Cast();
+            }
+            return false;
         }
 
         private async Task<bool> BloodletterPVP()
         {
-            if (!MinuetActive || NumRepertoire == 3 || MinuetActive && SongTimer < 3000)
+            if (NoSong ||
+                MinuetActive && (NumRepertoire == 3 && Core.Player.CurrentTarget.CurrentHealth < 2450
+                                 || NumRepertoire == 2 && Core.Player.CurrentTarget.CurrentHealth < 1600
+                                 || NumRepertoire == 1 && Core.Player.CurrentTarget.CurrentHealth < 900
+                                 || MinuetActive && SongTimer < 3000)
+             && Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Bloodletter.Cast();
             }
@@ -440,16 +451,6 @@ namespace ShinraCo.Rotations
             if (NoSong)
             {
                 return await MySpells.PVP.ArmysPaeon.Cast();
-            }
-            return false;
-        }
-
-        private async Task<bool> BarragePVP()
-        {
-            if (Shinra.LastSpell.Name != MySpells.PVP.StraightShot.Name &&
-                ActionManager.GetPvPComboCurrentActionId(MySpells.PVP.StraightShot.Combo) == MySpells.PVP.StraightShot.ID)
-            {
-                return await MySpells.PVP.Barrage.Cast();
             }
             return false;
         }

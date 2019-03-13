@@ -8,7 +8,11 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> Combat()
         {
-            if (Shinra.Settings.MachinistOpener) {if (await Helpers.ExecuteOpener()) return true; }
+            if (Shinra.Settings.MachinistOpener)
+            {
+                if (await Helpers.ExecuteOpener()) return true;
+            }
+
             if (await HotShot()) return true;
             if (await Flamethrower()) return true;
             if (await SpreadShot()) return true;
@@ -26,7 +30,11 @@ namespace ShinraCo.Rotations
         {
             if (await Shinra.SummonChocobo()) return true;
             if (await Shinra.ChocoboStance()) return true;
-            if (Shinra.Settings.MachinistOpener) { if (await Helpers.ExecuteOpener()) return true; }
+            if (Shinra.Settings.MachinistOpener)
+            {
+                if (await Helpers.ExecuteOpener()) return true;
+            }
+
             if (await FlamethrowerBuff()) return true;
             if (await BarrelStabilizer()) return true;
             if (await GaussBarrel()) return true;
@@ -87,7 +95,13 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
-            return false;
+            if (await WildfirePVP()) return true;
+            if (await BetweentheEyesPVP()) return true;
+            if (await GaussBarrelPVP()) return true;
+            if (await BlankPVP()) return true;
+            if (await QuickReloadPVP()) return true;
+            if (await HotShotPVP()) return true;
+            return await SplitShotPVP();
         }
 
         #endregion

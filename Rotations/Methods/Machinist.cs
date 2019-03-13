@@ -3,7 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
+using ff14bot.Behavior;
+using ff14bot.Helpers;
 using ff14bot.Managers;
+using ff14bot.Objects;
+using ff14bot.Enums;
 using ShinraCo.Settings;
 using ShinraCo.Spells.Main;
 using Resource = ff14bot.Managers.ActionResourceManager.Machinist;
@@ -65,7 +69,7 @@ namespace ShinraCo.Rotations
             if (Overheated && !Core.Player.HasAura("Enhanced Slug Shot") && !Core.Player.HasAura("Cleaner Shot") && Resource.Ammo < 2)
                 return await MySpells.Cooldown.Cast();
 
-            if (Overheated || Resource.Heat < 95 || Resource.Ammo > 0) return false;
+            if (Overheated || Resource.Heat < 90 || Resource.Ammo > 0) return false;
 
             if (!ActionManager.CanCast(MySpells.BarrelStabilizer.Name, Core.Player) || !UseWildfire || WildfireCooldown > 3000)
                 return await MySpells.Cooldown.Cast();
@@ -383,6 +387,95 @@ namespace ShinraCo.Rotations
                     return await MySpells.Role.Palisade.Cast(target);
                 }
             }
+            return false;
+        }
+
+        #endregion
+
+        #region PVP
+
+        private async Task<bool> SplitShotPVP()
+        {
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name))
+            {
+                return await MySpells.PVP.SplitShot.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> GaussBarrelPVP()
+        {
+            if (!Resource.GaussBarrel)
+            {
+                return await MySpells.PVP.GaussBarrel.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> HotShotPVP()
+        {
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) &&
+                Resource.GaussBarrel &&
+                (Resource.Heat >= 90 || Resource.Heat <= 45) &&
+                !Overheated &&
+                Resource.Ammo == 0 &&
+                !Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name, true))
+            {
+                return await MySpells.PVP.HotShot.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> QuickReloadPVP()
+        {
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) &&
+                (Resource.GaussBarrel && Resource.Ammo < 3 && Core.Player.CurrentTP >= 450 && Resource.Heat >= 50 ||
+                 Overheated ||
+                 Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name,
+                     true)))
+            {
+                return await MySpells.PVP.QuickReload.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> BetweentheEyesPVP()
+        {
+            if ((Core.Player.CurrentTarget.HasAura(1343) ||
+                Core.Player.CurrentTarget.HasAura(1345) && Shinra.Settings.MachinistWildfire) &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "狼心" &&
+                Core.Player.CurrentTarget.Name != "木人")
+            {
+                return await MySpells.PVP.BetweentheEyes.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> WildfirePVP()
+        {
+            if (Shinra.Settings.MachinistWildfire &&
+                Resource.GaussBarrel && Resource.Heat > 50 && Core.Player.CurrentTarget.CurrentHealthPercent > 30)
+            {
+                return await MySpells.PVP.Wildfire.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> BlankPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
+            if (target != null)
+            {
+                return await MySpells.PVP.Blank.Cast(target);
+            }
+
             return false;
         }
 

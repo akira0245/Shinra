@@ -308,69 +308,112 @@ namespace ShinraCo.Rotations
             {
                 return await MySpells.PVP.ChaosThrust.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> WheelingThrustPVP()
         {
-            if (ActionManager.GetPvPComboCurrentActionId(MySpells.PVP.WheelingThrust.Combo) == MySpells.PVP.WheelingThrust.ID)
+            if (ActionManager.GetPvPComboCurrentActionId(MySpells.PVP.WheelingThrust.Combo) ==
+                MySpells.PVP.WheelingThrust.ID)
             {
                 return await MySpells.PVP.WheelingThrust.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> SkewerPVP()
         {
-            if (!RecentJump)
+            if (Core.Player.CurrentTarget.CurrentHealth < 1000 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "木人" &&
+                Core.Player.CurrentTarget.Name != "狼心")
             {
                 return await MySpells.PVP.Skewer.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> JumpPVP()
         {
-            if (!MovementManager.IsMoving && !RecentJump && Resource.DragonGaze < 2)
+            if (!MovementManager.IsMoving &&
+                !RecentJump &&
+                Resource.DragonGaze < 2 &&
+                Core.Player.CurrentTP >= 700 ||
+                Core.Player.CurrentTarget.CurrentHealth < 1875 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Jump.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> SpineshatterDivePVP()
         {
-            if (!MovementManager.IsMoving && !RecentJump && Resource.DragonGaze < 2)
+            if (!MovementManager.IsMoving &&
+                !RecentJump &&
+                Resource.DragonGaze < 2 &&
+                Core.Player.TargetDistance(5, false) ||
+                Core.Player.CurrentTarget.CurrentHealth < 1125 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.SpineshatterDive.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> BloodOfTheDragonPVP()
         {
-            if (!RecentJump)
+            if (!RecentJump ||
+                !ActionManager.CanCast(MySpells.PVP.Geirskogul.Name,
+                    Core.Player.CurrentTarget) &&
+                !ActionManager.CanCast(MySpells.PVP.Nastrond.Name,
+                    Core.Player.CurrentTarget))
             {
                 return await MySpells.PVP.BloodOfTheDragon.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> GeirskogulPVP()
         {
-            if (!RecentJump)
+            if (!RecentJump &&
+                Core.Player.CurrentTarget.CurrentHealth < 2000 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Geirskogul.Cast();
             }
+
             return false;
         }
 
         private async Task<bool> NastrondPVP()
         {
-            if (!RecentJump)
+            if (!RecentJump &&
+                Core.Player.CurrentTarget.CurrentHealth < 2500 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Nastrond.Cast();
             }
+
+            return false;
+        }
+
+        private async Task<bool> PiercingTalonPVP()
+        {
+            if (Core.Player.CurrentTarget.CurrentHealth < 1600 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "木人" &&
+                Core.Player.CurrentTarget.Name != "狼心")
+            {
+                return await MySpells.PVP.PiercingTalon.Cast();
+            }
+
             return false;
         }
 
@@ -384,6 +427,6 @@ namespace ShinraCo.Rotations
         private static double SpineCooldown => DataManager.GetSpellData(95).Cooldown.TotalSeconds;
         private bool UseJump => BloodActive || !ActionManager.HasSpell(MySpells.BloodOfTheDragon.Name);
 
-        #endregion
+        #endregion  
     }
 }
