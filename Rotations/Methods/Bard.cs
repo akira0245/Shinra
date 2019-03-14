@@ -395,9 +395,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> StormbitePVP()
         {
-            if (((!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 4000) || !Core.Player.CurrentTarget.HasAura("Stormbite", true, 4000)))
-                && (ActionManager.LastSpell.Name != MySpells.PVP.HeavyShot.Name) 
-                && ((Core.Player.CurrentTarget.Name != "奋战补给箱") || ((Core.Player.CurrentTarget.Name == "奋战补给箱") && (Core.Player.CurrentTarget.CurrentHealthPercent > 70))))
+            if ((!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 4000) || !Core.Player.CurrentTarget.HasAura("Stormbite", true, 4000))
+                && ActionManager.LastSpell.Name != MySpells.PVP.HeavyShot.Name 
+                && (Core.Player.CurrentTarget.Name != "奋战补给箱" || Core.Player.CurrentTarget.Name == "奋战补给箱" && Core.Player.CurrentTarget.CurrentHealthPercent > 70))
             {
                 return await MySpells.PVP.Stormbite.Cast();
             }
@@ -426,11 +426,11 @@ namespace ShinraCo.Rotations
         private async Task<bool> BloodletterPVP()
         {
             if (NoSong || 
-            	(MinuetActive && (((NumRepertoire == 3 && Core.Player.CurrentTarget.CurrentHealth < 2450) 
-            	                || (NumRepertoire == 2 && Core.Player.CurrentTarget.CurrentHealth < 1600) 
-            	                || (NumRepertoire == 1 && Core.Player.CurrentTarget.CurrentHealth < 900)) 
-             || (MinuetActive && SongTimer < 3000))) 
-             && (Core.Player.CurrentTarget.Name != "奋战补给箱"))
+            	MinuetActive && (NumRepertoire == 3 && Core.Player.CurrentTarget.CurrentHealth < 2450 
+            	                 || NumRepertoire == 2 && Core.Player.CurrentTarget.CurrentHealth < 1600 
+            	                 || NumRepertoire == 1 && Core.Player.CurrentTarget.CurrentHealth < 900 
+            	                 || MinuetActive && SongTimer < 3000) 
+             && Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Bloodletter.Cast();	
             }

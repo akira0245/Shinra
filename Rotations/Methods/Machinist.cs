@@ -3,11 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
-using ff14bot.Behavior;
-using ff14bot.Helpers;
 using ff14bot.Managers;
-using ff14bot.Objects;
-using ff14bot.Enums;
 using ShinraCo.Settings;
 using ShinraCo.Spells.Main;
 using Resource = ff14bot.Managers.ActionResourceManager.Machinist;
@@ -420,8 +416,7 @@ namespace ShinraCo.Rotations
                 Resource.GaussBarrel &&
                 (Resource.Heat >= 90 || Resource.Heat <= 45) &&
                 !Overheated &&
-                Resource.Ammo == 0 &&
-                !Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name, true))
+                Resource.Ammo == 0 )
             {
                 return await MySpells.PVP.HotShot.Cast();
             }
@@ -431,11 +426,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> QuickReloadPVP()
         {
-            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) &&
-                (Resource.GaussBarrel && Resource.Ammo < 3 && Core.Player.CurrentTP >= 450 && Resource.Heat >= 50 ||
-                 Overheated ||
-                 Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name,
-                     true)))
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) && Resource.GaussBarrel && 
+                (Resource.Ammo < 3 && Core.Player.CurrentTP >= 850 && Resource.Heat >= 50 ||
+                 Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name)))
             {
                 return await MySpells.PVP.QuickReload.Cast();
             }
@@ -470,7 +463,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BlankPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell() || eu.HasAura(396));
             if (target != null)
             {
                 return await MySpells.PVP.Blank.Cast(target);

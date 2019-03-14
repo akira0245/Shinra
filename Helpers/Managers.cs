@@ -43,14 +43,15 @@ namespace ShinraCo
         {
             get
             {
-                return PartyMembers.Where(pm => pm.InCombat && pm.IsAlive && pm.Distance(Core.Player) < 30)
+                return PartyMembers
+                    .Where(pm => pm.CurrentHealthPercent < 65 && pm.IsAlive && pm.Distance(Core.Player) < 30)
                     .OrderByDescending(Importance);
             }
         }
 
         private static int Importance(BattleCharacter c)
         {
-            return c.IsHealer() ? 60 : c.IsDPS() ? 50 : c.IsTank() ? 40 : 0;
+            return c.IsHealer() ? 60 : c.IsDPS() ? 40 : c.IsTank() ? 20 : 0;
         }
     }
 }

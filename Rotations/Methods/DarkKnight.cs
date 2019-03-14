@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Media;
 using Buddy.Coroutines;
 using ff14bot;
-using ff14bot.Enums;
-using ff14bot.Helpers;
 using ff14bot.Managers;
 using ff14bot.Objects;
 using ShinraCo.Settings;
@@ -357,7 +351,8 @@ namespace ShinraCo.Rotations
         {
             if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                Core.Player.CurrentTarget.Name != "狼心")
+                Core.Player.CurrentTarget.Name != "狼心" ||
+                Core.Player.CurrentTarget.HasAura(1343, false, 500))
             {
                 return await MySpells.PVP.Bloodspiller.Cast();
             }
@@ -368,9 +363,9 @@ namespace ShinraCo.Rotations
         private async Task<bool> TheBlackestNightPVP()
         {
             var target = Managers.TheBlackestNightTarget.FirstOrDefault();
-            if (target != null && target.CurrentHealthPercent < 65)
+            if (target != null)
             {
-                return await MySpells.PVP.TheBlackestNight.Cast(target,false);
+                return await MySpells.PVP.TheBlackestNight.Cast(target, false);
             }
 
             return false;
@@ -378,8 +373,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> LowBlowPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
-            if (target != null && !target.HasAura(1349))
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsStunableSpell() || eu.HasAura(396));
+            if (target != null)
             {
                 return await MySpells.PVP.LowBlow.Cast(target);
             }
@@ -389,7 +384,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> UnmendPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsInterruptibleSpell());
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
             if (target != null && (target.HasAura(1349) || target.Distance() > 3))
             {
                 return await MySpells.PVP.Unmend.Cast(target);
