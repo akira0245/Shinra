@@ -343,10 +343,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> FellCleavePVP()
         {
-            if (PVPDeliveranceStance && (Resource.BeastGauge == 100 || Resource.BeastGauge == 90 && ActionManager.LastSpellId == 8761 ||
-                                         Core.Player.CurrentTarget.HasAura(1343) || Core.Player.CurrentTarget.CurrentHealth < 3000 &&
-                                         Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "木人" ) || 
-                PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 || 
+            if (PVPDeliveranceStance && (Resource.BeastGauge == 100 ||
+                                         Resource.BeastGauge == 90 &&
+                                         ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name ||
+                                         Core.Player.CurrentTarget.HasAura(1343) ||
+                                         Core.Player.CurrentTarget.CurrentHealth < 3000 &&
+                                         Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                                         Core.Player.CurrentTarget.Name != "木人") ||
+                PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 ||
                 Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
             {
                 return await MySpells.PVP.FellCleave.Cast();
@@ -357,8 +361,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> OnslaughtPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
-            if (target != null && !target.HasAura(1349))
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                eu.IsPushableSpell() && !eu.HasAura(1349) && eu.Distance(Core.Player) < 15);
+            if (target != null)
             {
                 return await MySpells.PVP.Onslaught.Cast(target);
             }
@@ -380,8 +385,8 @@ namespace ShinraCo.Rotations
         private async Task<bool> HolmgangPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsPushableSpell() && eu.HasAura(1349) && eu.Distance() > 3 && eu.Distance() < 10 ||
-                Core.Player.CurrentHealthPercent < 15 && eu.IsVisible && eu.Distance() < 10);
+                eu.IsPushableSpell() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 ||
+                Core.Player.CurrentHealthPercent < 15 && eu.IsVisible && eu.Distance(Core.Player) < 10);
             if (target != null)
             {
                 return await MySpells.PVP.Holmgang.Cast(target);
