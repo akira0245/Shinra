@@ -379,8 +379,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> HolmgangPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
-            if (target != null && target.HasAura(1349) && target.Distance() > 3 && target.Distance() < 10)
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                eu.IsPushableSpell() && eu.HasAura(1349) && eu.Distance() > 3 && eu.Distance() < 10 ||
+                Core.Player.CurrentHealthPercent < 15 && eu.IsVisible && eu.Distance() < 10);
+            if (target != null)
             {
                 return await MySpells.PVP.Holmgang.Cast(target);
             }
