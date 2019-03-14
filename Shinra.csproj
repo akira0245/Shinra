@@ -177,6 +177,7 @@
     <Compile Include="Spells\Opener\WarriorOpener.cs" />
     <Compile Include="Spells\PVP\BardPVP.cs" />
     <Compile Include="Spells\PVP\BlackMagePVP.cs" />
+    <Compile Include="Spells\PVP\WarriorPVP.cs" />
     <Compile Include="Spells\PVP\DarkKnightPVP.cs" />
     <Compile Include="Spells\PVP\DragoonPVP.cs" />
     <Compile Include="Spells\PVP\MachinistPVP.cs" />

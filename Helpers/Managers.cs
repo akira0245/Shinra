@@ -18,7 +18,7 @@ namespace ShinraCo
             }
         }
 
-        private static IEnumerable<BattleCharacter> PartyMembers
+        public static IEnumerable<BattleCharacter> PartyMembers
         {
             get
             {

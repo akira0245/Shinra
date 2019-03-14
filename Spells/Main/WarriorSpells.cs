@@ -1,11 +1,12 @@
-﻿using ShinraCo.Spells.Role;
+﻿using ShinraCo.Spells.PVP;
+using ShinraCo.Spells.Role;
 
 namespace ShinraCo.Spells.Main
 {
     public class MarauderSpells
     {
         public TankSpells Role { get; } = new TankSpells();
-
+        public WarriorPVP PVP { get; } = new WarriorPVP();
         public Spell HeavySwing { get; } = new Spell
         {
             Name = "Heavy Swing",

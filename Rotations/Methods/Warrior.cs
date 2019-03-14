@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Linq;
 using ff14bot;
 using ff14bot.Managers;
 using ShinraCo.Settings;
@@ -320,11 +321,97 @@ namespace ShinraCo.Rotations
 
         #endregion
 
+        #region PVP
+
+        private async Task<bool> StormsPathPVP()
+        {
+            return await MySpells.PVP.StormsPath.Cast();
+        }
+
+        private async Task<bool> ButchersBlockPVP()
+        {
+            if (!Core.Player.CurrentTarget.HasAura(1371, false, 7000) && 
+                ActionManager.LastSpell.Name != MySpells.PVP.Maim.Name &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "狼心")
+            {
+                return await MySpells.PVP.ButchersBlock.Cast();
+            }
+
+            return false;
+            }
+
+        private async Task<bool> FellCleavePVP()
+        {
+            if (PVPDeliveranceStance && (Resource.BeastGauge == 100 || Resource.BeastGauge == 90 && ActionManager.LastSpellId == 8761 ||
+                                         Core.Player.CurrentTarget.HasAura(1343) || Core.Player.CurrentTarget.CurrentHealth < 3000 &&
+                                         Core.Player.CurrentTarget.Name != "奋战补给箱" ) || 
+                PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 || 
+                Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
+            {
+                return await MySpells.PVP.FellCleave.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> OnslaughtPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
+            if (target != null && !target.HasAura(1349))
+            {
+                return await MySpells.PVP.Onslaught.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> TomahawkPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.HasAura(396));
+            if (target != null)
+            {
+                return await MySpells.PVP.Onslaught.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> HolmgangPVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
+            if (target != null && target.HasAura(1349) && target.Distance() > 3 && target.Distance() < 10)
+            {
+                return await MySpells.PVP.Holmgang.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> ThrillofWarPVP()
+        {
+            var partylowhealth = Managers.PartyMembers.Count(pm =>
+                                     pm.CurrentHealthPercent < 70 && pm.IsAlive && pm.Distance(Core.Player) < 15) > 1;
+            var pmlowhealth = Managers.PartyMembers.Any(pm =>
+                                   pm.CurrentHealthPercent < 40 && pm.IsAlive && pm.Distance(Core.Player) < 15);
+
+            if (partylowhealth || pmlowhealth)
+            {
+                return await MySpells.PVP.ThrillofWar.Cast();
+            }
+
+            return false;
+        }
+
+        #endregion
+
         #region Custom
 
         private static int BeastDeficit => 100 - Resource.BeastGauge;
         private static bool DefianceStance => Core.Player.HasAura(91);
         private static bool DeliveranceStance => Core.Player.HasAura(729);
+        private static bool PVPDefianceStance => Core.Player.HasAura(1396);
+        private static bool PVPDeliveranceStance => !Core.Player.HasAura(1396);
         private static bool HeavySwingNext => ActionManager.LastSpellId == 42 || ActionManager.LastSpellId == 45 || 
                                               ActionManager.LastSpellId == 47;
 
