@@ -345,7 +345,7 @@ namespace ShinraCo.Rotations
         {
             if (PVPDeliveranceStance && (Resource.BeastGauge == 100 || Resource.BeastGauge == 90 && ActionManager.LastSpellId == 8761 ||
                                          Core.Player.CurrentTarget.HasAura(1343) || Core.Player.CurrentTarget.CurrentHealth < 3000 &&
-                                         Core.Player.CurrentTarget.Name != "奋战补给箱" ) || 
+                                         Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "木人" ) || 
                 PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 || 
                 Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
             {
