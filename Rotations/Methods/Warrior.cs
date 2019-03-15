@@ -343,15 +343,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> FellCleavePVP()
         {
-            if (PVPDeliveranceStance && (Resource.BeastGauge == 100 ||
-                                         Resource.BeastGauge == 90 &&
-                                         ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name ||
-                                         Core.Player.CurrentTarget.HasAura(1343) ||
-                                         Core.Player.CurrentTarget.CurrentHealth < 3000 &&
-                                         Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                                         Core.Player.CurrentTarget.Name != "木人") ||
-                PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 ||
-                Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
+            if ((Core.Player.CurrentTarget.CurrentHealth < 3000 || Resource.BeastGauge == 100 ||
+                 Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name &&
+                 Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "木人")
+                && 
+                (PVPDeliveranceStance || 
+                 PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 && !Core.Player.HasAura(1398, true, 2000) ||
+                 Core.Player.HasAura(MySpells.PVP.InnerRelease.Name)))
+                
             {
                 return await MySpells.PVP.FellCleave.Cast();
             }
@@ -362,7 +361,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> OnslaughtPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsPushableSpell() && !eu.HasAura(1349) && eu.Distance(Core.Player) < 15);
+                eu.IsLimitBreaking() && !eu.HasAura(1349) && eu.Distance(Core.Player) < 15);
             if (target != null)
             {
                 return await MySpells.PVP.Onslaught.Cast(target);
@@ -385,8 +384,8 @@ namespace ShinraCo.Rotations
         private async Task<bool> HolmgangPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsPushableSpell() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 ||
-                Core.Player.CurrentHealthPercent < 15 && eu.IsVisible && eu.Distance(Core.Player) < 10);
+                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 ||
+                Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 10);
             if (target != null)
             {
                 return await MySpells.PVP.Holmgang.Cast(target);
@@ -409,6 +408,17 @@ namespace ShinraCo.Rotations
 
             return false;
         }
+
+        //private async Task<bool> DefiancePVP()
+        //{
+        //    if (PVPDeliveranceStance && (Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
+        //        PVPDefianceStance && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 95) 
+        //    {
+        //        return await MySpells.Defiance.Cast();
+        //    }
+
+        //    return false;
+        //}
 
         #endregion
 

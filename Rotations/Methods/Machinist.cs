@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
+using ff14bot.Enums;
 using ff14bot.Managers;
 using ShinraCo.Settings;
 using ShinraCo.Spells.Main;
@@ -441,8 +442,7 @@ namespace ShinraCo.Rotations
             if ((Core.Player.CurrentTarget.HasAura(1343) ||
                 Core.Player.CurrentTarget.HasAura(1345) && Shinra.Settings.MachinistWildfire ) &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                Core.Player.CurrentTarget.Name != "狼心" &&
-                Core.Player.CurrentTarget.Name != "木人")
+                Core.Player.CurrentTarget.Name != "狼心")
             {
                 return await MySpells.PVP.BetweentheEyes.Cast();
             }
@@ -452,8 +452,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> WildfirePVP()
         {
-            if (Shinra.Settings.MachinistWildfire && 
-                Resource.GaussBarrel && Resource.Heat > 50 && Core.Player.CurrentTarget.CurrentHealthPercent > 30)
+            if (Shinra.Settings.MachinistWildfire &&
+                Resource.GaussBarrel && Resource.Heat > 50 && Core.Player.CurrentTarget.CurrentHealthPercent > 30 ||
+                Resource.Ammo == 3)
             {
                 return await MySpells.PVP.Wildfire.Cast();
             }
@@ -463,10 +464,25 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BlankPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell() || eu.HasAura(396));
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                eu.IsStunableSpell() && (eu.IsMelee() || eu.CurrentJob == ClassJobType.Machinist ||
+                                         eu.CurrentJob == ClassJobType.RedMage) || eu.IsLimitBreaking() || eu.HasAura(396));
             if (target != null)
             {
                 return await MySpells.PVP.Blank.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> LegGrazePVP()
+        {
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                !eu.HasAura(1350) &&
+                (eu.HasAura(1455) || eu.HasAura(1413) || eu.IsMelee() && eu.Distance(Core.Player) > 10));
+            if (target != null)
+            {
+                return await MySpells.PVP.LegGraze.Cast(target);
             }
 
             return false;

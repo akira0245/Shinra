@@ -44,7 +44,7 @@ namespace ShinraCo
             get
             {
                 return PartyMembers
-                    .Where(pm => pm.CurrentHealthPercent < 65 && pm.IsAlive && pm.Distance(Core.Player) < 30)
+                    .Where(pm => pm.CurrentHealthPercent < 70 && pm.IsAlive && pm.Distance(Core.Player) < 30)
                     .OrderByDescending(Importance);
             }
         }
@@ -52,6 +52,11 @@ namespace ShinraCo
         private static int Importance(BattleCharacter c)
         {
             return c.IsHealer() ? 60 : c.IsDPS() ? 40 : c.IsTank() ? 20 : 0;
+        }
+
+        public static bool HeavyMedal()
+        {
+            return Core.Player.HasAura(1501) || Core.Player.HasAura(1502);
         }
     }
 }

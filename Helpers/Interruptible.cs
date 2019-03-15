@@ -20,7 +20,7 @@ namespace ShinraCo
                    || unitAsCharacter.HasAura(1455) || unitAsCharacter.HasAura(1413) || unitAsCharacter.HasAura(1325);
         }
 
-        public static bool IsPushableSpell(this GameObject unit)
+        public static bool IsLimitBreaking(this GameObject unit)
         {
             var unitAsCharacter = unit as Character;
             if (unitAsCharacter == null) return false;

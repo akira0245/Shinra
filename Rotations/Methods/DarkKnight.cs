@@ -336,7 +336,7 @@ namespace ShinraCo.Rotations
             if (!Core.Player.CurrentTarget.HasAura(MySpells.PowerSlash.Name, true, 6000) &&
                 Core.Player.CurrentHealthPercent > 60 &&
                 Core.Player.CurrentManaPercent > 50 &&
-                BloodValue > 50 &&
+                BloodValue >= 50 &&
                 ActionManager.LastSpell.Name != MySpells.PVP.SyphonStrike.Name &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "狼心")
@@ -384,10 +384,21 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> UnmendPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsPushableSpell());
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsLimitBreaking());
             if (target != null && (target.HasAura(1349) || target.Distance() > 3))
             {
                 return await MySpells.PVP.Unmend.Cast(target);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> GritPVP()
+        {
+            if (!Grited && (Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
+                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 95)
+            {
+                return await MySpells.Grit.Cast();
             }
 
             return false;
@@ -398,6 +409,7 @@ namespace ShinraCo.Rotations
         #region Custom
 
         private static int BloodValue => Resource.BlackBlood;
+        private static bool Grited => Core.Player.HasAura(1397);
 
         #endregion
     }

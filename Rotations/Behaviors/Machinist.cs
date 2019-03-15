@@ -99,6 +99,7 @@ namespace ShinraCo.Rotations
             if (await BetweentheEyesPVP()) return true;
             if (await GaussBarrelPVP()) return true;
             if (await BlankPVP()) return true;
+            if (await LegGrazePVP()) return true;
             if (await QuickReloadPVP()) return true;
             if (await HotShotPVP()) return true;
             return await SplitShotPVP();

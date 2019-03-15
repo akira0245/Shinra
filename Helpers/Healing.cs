@@ -144,5 +144,19 @@ namespace ShinraCo
         {
             return !c.IsTank() && !c.IsHealer();
         }
+
+        public static bool IsMelee(this Character c)
+        {
+            switch (c.CurrentJob)
+            {
+                case ClassJobType.Dragoon:
+                case ClassJobType.Monk:
+                case ClassJobType.Samurai:
+                case ClassJobType.Ninja:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }
