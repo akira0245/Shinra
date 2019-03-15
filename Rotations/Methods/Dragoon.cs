@@ -326,8 +326,8 @@ namespace ShinraCo.Rotations
         private async Task<bool> SkewerPVP()
         {
             if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                Core.Player.CurrentTarget.Name != "木人")
+                Core.Player.CurrentTarget.Name != "奋战补给箱" && !Core.Player.CurrentTarget.HasAura(1302) &&
+                Core.Player.CurrentTarget.Name != "木人") 
             {
                 return await MySpells.PVP.Skewer.Cast();
             }
@@ -337,12 +337,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> JumpPVP()
         {
-            if (!MovementManager.IsMoving &&
-                !RecentJump &&
-                Resource.DragonGaze < 2 &&
-                Core.Player.CurrentTP >= 700 ||
-                Core.Player.CurrentTarget.CurrentHealth < 1875 &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱")
+            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.CurrentTP >= 630 
+                ||
+                Core.Player.CurrentTarget.CurrentHealth < 2000 && !Core.Player.CurrentTarget.HasAura(1304) &&
+                !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "木人")
             {
                 return await MySpells.PVP.Jump.Cast();
             }
@@ -352,12 +350,11 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SpineshatterDivePVP()
         {
-            if (!MovementManager.IsMoving && 
-                !RecentJump &&
-                Resource.DragonGaze < 2 &&
-                Core.Player.TargetDistance(5) ||
-                Core.Player.CurrentTarget.CurrentHealth < 1125 &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱")
+            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.TargetDistance(5, false) 
+                ||
+                 Core.Player.CurrentTarget.CurrentHealth < 1125 && !Core.Player.CurrentTarget.HasAura(1304) &&
+                !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "木人")
             {
                 return await MySpells.PVP.SpineshatterDive.Cast();
             }
@@ -377,9 +374,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> GeirskogulPVP()
         {
-            if (!RecentJump &&
-                Core.Player.CurrentTarget.CurrentHealth < 2000 &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱")
+            if (BloodActive && Resource.DragonGaze == 3 
+                            && (Core.Player.CurrentTarget.CurrentHealth < 2000
+                                && !Core.Player.CurrentTarget.HasAura(1304)
+                                && !Core.Player.CurrentTarget.HasAura(1302)
+                                && Core.Player.CurrentTarget.Name != "奋战补给箱"
+                                && Core.Player.CurrentTarget.Name != "木人"
+                                || ActionManager.LastSpell.Name == MySpells.PVP.FullThrust.Name
+                                || ActionManager.LastSpell.Name == MySpells.PVP.ChaosThrust.Name)) 
             {
                 return await MySpells.PVP.Geirskogul.Cast();
             }
@@ -389,9 +391,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> NastrondPVP()
         {
-            if (!RecentJump &&
-                Core.Player.CurrentTarget.CurrentHealth < 2500 &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱")
+            if (BloodActive && Resource.DragonGaze == 3 
+                            && (Core.Player.CurrentTarget.CurrentHealth < 2500
+                                && !Core.Player.CurrentTarget.HasAura(1304)
+                                && !Core.Player.CurrentTarget.HasAura(1302)
+                                && Core.Player.CurrentTarget.Name != "奋战补给箱"
+                                && Core.Player.CurrentTarget.Name != "木人"
+                                || ActionManager.LastSpell.Name == MySpells.PVP.FullThrust.Name
+                                || ActionManager.LastSpell.Name == MySpells.PVP.ChaosThrust.Name))
             {
                 return await MySpells.PVP.Nastrond.Cast();
             }
@@ -401,7 +408,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> PiercingTalonPVP()
         {
-            if (Core.Player.CurrentTarget.CurrentHealth < 1400 &&
+            if (Core.Player.CurrentTarget.CurrentHealth < 1500 && !Core.Player.CurrentTarget.HasAura(1304) &&
+                !Core.Player.CurrentTarget.HasAura(1302) &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "木人" &&
                 Core.Player.CurrentTarget.Name != "狼心")
@@ -414,7 +422,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> EnlivenPVP()
         {
-            if (Core.Player.CurrentTP < 440)
+            if (Core.Player.CurrentTP < 430)
             {
                 return await MySpells.Adventurer.Enliven.Cast();
             }

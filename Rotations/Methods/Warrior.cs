@@ -343,13 +343,15 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> FellCleavePVP()
         {
-            if ((Core.Player.CurrentTarget.CurrentHealth < 3000 || Resource.BeastGauge == 100 ||
-                 Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name &&
-                 Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "木人")
-                && 
-                (PVPDeliveranceStance || 
-                 PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 && !Core.Player.HasAura(1398, true, 2000) ||
-                 Core.Player.HasAura(MySpells.PVP.InnerRelease.Name)))
+            if ((Core.Player.CurrentTarget.CurrentHealth < 3000 && 
+                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                 Core.Player.CurrentTarget.Name != "木人" || Resource.BeastGauge == 100 ||
+                 Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name)
+                &&
+                (PVPDeliveranceStance ||
+                 PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 &&
+                 !Core.Player.HasAura(1398, true, 2000)) ||
+                Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
                 
             {
                 return await MySpells.PVP.FellCleave.Cast();
