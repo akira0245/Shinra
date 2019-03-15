@@ -478,8 +478,9 @@ namespace ShinraCo.Rotations
         private async Task<bool> LegGrazePVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                !eu.HasAura(1350) &&
-                (eu.HasAura(1455) || eu.HasAura(1413) || eu.IsMelee() && eu.Distance(Core.Player) > 10));
+                (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 25 &&
+                eu.Distance(eu.TargetGameObject) > 10 &&
+                !eu.HasAura(1350) || eu.HasAura(396));
             if (target != null)
             {
                 return await MySpells.PVP.LegGraze.Cast(target);

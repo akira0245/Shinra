@@ -364,7 +364,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BloodOfTheDragonPVP()
         {
-            if (!RecentJump && !BloodActive)
+            if (!BloodActive)
             {
                 return await MySpells.PVP.BloodOfTheDragon.Cast();
             }
@@ -374,14 +374,12 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> GeirskogulPVP()
         {
-            if (BloodActive && Resource.DragonGaze == 3 
-                            && (Core.Player.CurrentTarget.CurrentHealth < 2000
-                                && !Core.Player.CurrentTarget.HasAura(1304)
-                                && !Core.Player.CurrentTarget.HasAura(1302)
-                                && Core.Player.CurrentTarget.Name != "奋战补给箱"
-                                && Core.Player.CurrentTarget.Name != "木人"
-                                || ActionManager.LastSpell.Name == MySpells.PVP.FullThrust.Name
-                                || ActionManager.LastSpell.Name == MySpells.PVP.ChaosThrust.Name)) 
+            if (BloodActive && Resource.DragonGaze == 3
+                            && Core.Player.CurrentTarget.CurrentHealth < 2000
+                            && !Core.Player.CurrentTarget.HasAura(1304)
+                            && !Core.Player.CurrentTarget.HasAura(1302)
+                            && Core.Player.CurrentTarget.Name != "奋战补给箱"
+                            && Core.Player.CurrentTarget.Name != "木人")
             {
                 return await MySpells.PVP.Geirskogul.Cast();
             }
@@ -391,14 +389,12 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> NastrondPVP()
         {
-            if (BloodActive && Resource.DragonGaze == 3 
-                            && (Core.Player.CurrentTarget.CurrentHealth < 2500
-                                && !Core.Player.CurrentTarget.HasAura(1304)
-                                && !Core.Player.CurrentTarget.HasAura(1302)
-                                && Core.Player.CurrentTarget.Name != "奋战补给箱"
-                                && Core.Player.CurrentTarget.Name != "木人"
-                                || ActionManager.LastSpell.Name == MySpells.PVP.FullThrust.Name
-                                || ActionManager.LastSpell.Name == MySpells.PVP.ChaosThrust.Name))
+            if (BloodActive && Resource.DragonGaze == 3
+                            && Core.Player.CurrentTarget.CurrentHealth < 2500
+                            && !Core.Player.CurrentTarget.HasAura(1304)
+                            && !Core.Player.CurrentTarget.HasAura(1302)
+                            && Core.Player.CurrentTarget.Name != "奋战补给箱"
+                            && Core.Player.CurrentTarget.Name != "木人") 
             {
                 return await MySpells.PVP.Nastrond.Cast();
             }

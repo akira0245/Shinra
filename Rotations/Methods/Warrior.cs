@@ -343,15 +343,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> FellCleavePVP()
         {
-            if ((Core.Player.CurrentTarget.CurrentHealth < 3000 && 
-                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                 Core.Player.CurrentTarget.Name != "木人" || Resource.BeastGauge == 100 ||
-                 Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name)
-                &&
-                (PVPDeliveranceStance ||
-                 PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 &&
-                 !Core.Player.HasAura(1398, true, 2000)) ||
-                Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
+            if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱" &&
+                Core.Player.CurrentTarget.Name != "木人" || Resource.BeastGauge == 100 ||
+                Core.Player.CurrentTarget.HasAura(1343) ||
+                Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name
+                || PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 &&
+                !Core.Player.HasAura(1398, true, 2000) ||
+                Core.Player.HasAura(MySpells.PVP.InnerRelease.Name)) 
                 
             {
                 return await MySpells.PVP.FellCleave.Cast();
@@ -374,8 +373,11 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TomahawkPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.HasAura(396));
-            if (target != null)
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 15 &&
+                eu.Distance(eu.TargetGameObject) > 5 &&
+                !eu.HasAura(1350) || eu.HasAura(396));
+            if (target != null || !Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
             {
                 return await MySpells.PVP.Tomahawk.Cast(target);
             }
