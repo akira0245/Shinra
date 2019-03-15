@@ -375,9 +375,9 @@ namespace ShinraCo.Rotations
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
                 (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 15 &&
-                eu.Distance(eu.TargetGameObject) > 5 &&
+                eu.Distance(eu.TargetGameObject) > 6 &&
                 !eu.HasAura(1350) || eu.HasAura(396));
-            if (target != null || !Core.Player.HasAura(MySpells.PVP.InnerRelease.Name))
+            if (target != null)
             {
                 return await MySpells.PVP.Tomahawk.Cast(target);
             }
