@@ -376,7 +376,7 @@ namespace ShinraCo.Rotations
             var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.HasAura(396));
             if (target != null)
             {
-                return await MySpells.PVP.Onslaught.Cast(target);
+                return await MySpells.PVP.Tomahawk.Cast(target);
             }
 
             return false;
