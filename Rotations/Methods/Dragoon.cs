@@ -325,10 +325,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SkewerPVP()
         {
-            if (Core.Player.CurrentTarget.CurrentHealth < 1000 &&
+            if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
-                Core.Player.CurrentTarget.Name != "木人" &&
-                Core.Player.CurrentTarget.Name != "狼心")
+                Core.Player.CurrentTarget.Name != "木人")
             {
                 return await MySpells.PVP.Skewer.Cast();
             }
@@ -356,7 +355,7 @@ namespace ShinraCo.Rotations
             if (!MovementManager.IsMoving && 
                 !RecentJump &&
                 Resource.DragonGaze < 2 &&
-                Core.Player.TargetDistance(5, false) ||
+                Core.Player.TargetDistance(5) ||
                 Core.Player.CurrentTarget.CurrentHealth < 1125 &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
@@ -368,11 +367,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BloodOfTheDragonPVP()
         {
-            if (!RecentJump ||
-                !ActionManager.CanCast(MySpells.PVP.Geirskogul.Name,
-                    Core.Player.CurrentTarget) &&
-                !ActionManager.CanCast(MySpells.PVP.Nastrond.Name,
-                    Core.Player.CurrentTarget))
+            if (!RecentJump && !BloodActive)
             {
                 return await MySpells.PVP.BloodOfTheDragon.Cast();
             }
@@ -406,12 +401,32 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> PiercingTalonPVP()
         {
-            if (Core.Player.CurrentTarget.CurrentHealth < 1600 &&
+            if (Core.Player.CurrentTarget.CurrentHealth < 1400 &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "木人" &&
                 Core.Player.CurrentTarget.Name != "狼心")
             {
                 return await MySpells.PVP.PiercingTalon.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> EnlivenPVP()
+        {
+            if (Core.Player.CurrentTP < 440)
+            {
+                return await MySpells.Adventurer.Enliven.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> SafeGuardPVP()
+        {
+            if (Core.Player.CurrentHealthPercent < 70 && !Core.Player.HasAura(1415))
+            {
+                return await MySpells.Adventurer.Safeguard.Cast();
             }
 
             return false;

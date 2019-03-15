@@ -121,11 +121,13 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
+            if (await SafeGuardPVP()) return true;
             if (await NastrondPVP()) return true;
             if (await GeirskogulPVP()) return true;
             if (await BloodOfTheDragonPVP()) return true;
             if (await JumpPVP()) return true;
             if (await PiercingTalonPVP()) return true;
+            if (await EnlivenPVP()) return true;
             if (await SpineshatterDivePVP()) return true;
             if (await SkewerPVP()) return true;
             if (await WheelingThrustPVP()) return true;

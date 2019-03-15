@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ff14bot.Objects;
 
 namespace ShinraCo
@@ -24,7 +23,7 @@ namespace ShinraCo
         {
             var unitAsCharacter = unit as Character;
             if (unitAsCharacter == null) return false;
-            return unitAsCharacter.IsCasting && PushableSpellIds.Contains(unitAsCharacter.CastingSpellId)
+            return unitAsCharacter.IsCasting && LimitBreakIds.Contains(unitAsCharacter.CastingSpellId)
                    || unitAsCharacter.HasAura(1455);
         }
 
@@ -33,7 +32,7 @@ namespace ShinraCo
             3360, 3361, 4249, 8831, 7422, 8866
         };
 
-        private static readonly HashSet<uint> PushableSpellIds = new HashSet<uint>
+        private static readonly HashSet<uint> LimitBreakIds = new HashSet<uint>
         {
             3360, 3361, 4249
         };

@@ -1,11 +1,13 @@
 ﻿using ShinraCo.Spells.Role;
 using ShinraCo.Spells.PVP;
+using ShinraCo.Spells.Adventurer;
 
 namespace ShinraCo.Spells.Main
 {
     public class DarkKnightSpells
     {
         public TankSpells Role { get; } = new TankSpells();
+        public AdventurerAction Adventurer { get; } = new AdventurerAction();
         public DarkKnightPVP PVP { get; } = new DarkKnightPVP();
         public Spell HardSlash { get; } = new Spell
         {

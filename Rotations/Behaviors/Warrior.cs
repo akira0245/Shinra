@@ -127,9 +127,11 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
+            if (await RecuperatePVP()) return true;
+            if (await SafeguardPVP()) return true;
             if (await HolmgangPVP()) return true;
-            if (await OnslaughtPVP()) return true;
             if (await TomahawkPVP()) return true;
+            if (await OnslaughtPVP()) return true;
             //if (await DefiancePVP()) return true;
             if (await ThrillofWarPVP()) return true;
             if (await FellCleavePVP()) return true;

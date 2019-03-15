@@ -1,11 +1,13 @@
 ﻿using ShinraCo.Spells.PVP;
 using ShinraCo.Spells.Role;
+using ShinraCo.Spells.Adventurer;
 
 namespace ShinraCo.Spells.Main
 {
     public class LancerSpells
     {
         public DragoonPVP PVP { get; } = new DragoonPVP();
+        public AdventurerAction Adventurer { get; } = new AdventurerAction();
         public MeleeSpells Role { get; } = new MeleeSpells();
 
         public Spell TrueThrust { get; } = new Spell

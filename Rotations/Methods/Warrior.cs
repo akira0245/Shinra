@@ -409,6 +409,26 @@ namespace ShinraCo.Rotations
             return false;
         }
 
+        private async Task<bool> SafeguardPVP()
+        {
+            if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415))
+            {
+                return await MySpells.Adventurer.Safeguard.Cast();
+            }
+
+            return false;
+        }
+
+        private async Task<bool> RecuperatePVP()
+        {
+            if (Core.Player.CurrentHealthPercent < 40)
+            {
+                return await MySpells.Adventurer.Recuperate.Cast();
+            }
+
+            return false;
+        }
+
         //private async Task<bool> DefiancePVP()
         //{
         //    if (PVPDeliveranceStance && (Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
