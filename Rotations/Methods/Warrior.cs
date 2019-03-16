@@ -373,9 +373,11 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TomahawkPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.Distance(Core.Player) < 15 &&
-                (eu.IsMelee() || eu.IsTank()) && (eu.HasTarget && eu.Distance(eu.TargetGameObject) > 6 &&
-                !eu.HasAura(1350) || eu.HasAura(396)) || eu.CurrentHealth < 500);
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                eu.Distance(Core.Player) < 15 &&(eu.IsMelee() || eu.IsTank()) &&
+                (eu.HasTarget && eu.Distance(eu.TargetGameObject) > 6 &&
+                 !eu.HasAura(1350) || eu.HasAura(396)) ||
+                eu.CurrentHealth < 500 && eu.Name != "木人" && eu.Name != "奋战补给箱");
             if (target != null)
             {
                 return await MySpells.PVP.Tomahawk.Cast(target);
