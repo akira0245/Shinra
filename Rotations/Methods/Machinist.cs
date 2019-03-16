@@ -427,9 +427,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> QuickReloadPVP()
         {
-            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) && Resource.GaussBarrel && 
-                (Resource.Ammo < 3 && Core.Player.CurrentTP >= 850 && Resource.Heat >= 50 ||
-                 Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name)))
+            if (!Core.Player.HasAura(MySpells.Flamethrower.Name) && Resource.GaussBarrel &&
+                (Resource.Ammo < 3 &&Resource.Heat >= 50 &&
+                 (Core.Player.CurrentTP >= 850 || Core.Player.CurrentTP >= 250 && Shinra.Settings.MachinistWildfire) 
+                 || Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name)))
             {
                 return await MySpells.PVP.QuickReload.Cast();
             }
@@ -440,7 +441,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> BetweentheEyesPVP()
         {
             if ((Core.Player.CurrentTarget.HasAura(1343) ||
-                Core.Player.CurrentTarget.HasAura(1345) && Shinra.Settings.MachinistWildfire ) &&
+                Core.Player.CurrentTarget.HasAura(1345) && Shinra.Settings.MachinistWildfire) &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "狼心")
             {
@@ -466,7 +467,8 @@ namespace ShinraCo.Rotations
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
                 eu.IsStunableSpell() && (eu.IsMelee() || eu.CurrentJob == ClassJobType.Machinist ||
-                                         eu.CurrentJob == ClassJobType.RedMage) || eu.IsLimitBreaking() || eu.HasAura(396));
+                                         eu.CurrentJob == ClassJobType.RedMage)
+                || eu.IsLimitBreaking() || eu.HasAura(396));
             if (target != null)
             {
                 return await MySpells.PVP.Blank.Cast(target);
@@ -478,10 +480,10 @@ namespace ShinraCo.Rotations
         private async Task<bool> LegGrazePVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 25 &&
+                (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 25 && eu.HasTarget &&
                 eu.Distance(eu.TargetGameObject) > 10 &&
                 !eu.HasAura(1350) || eu.HasAura(396));
-            if (target != null)
+            if (target != null && !Shinra.Settings.MachinistWildfire)
             {
                 return await MySpells.PVP.LegGraze.Cast(target);
             }

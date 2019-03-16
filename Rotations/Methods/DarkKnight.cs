@@ -395,10 +395,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> GritPVP()
         {
-            if (!Grited && (Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
-                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 95)
+            if (!Grited && (Managers.BeingWatched() || Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
+                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Managers.BeingWatched())
             {
-                return await MySpells.Grit.Cast();
+                return await MySpells.PVP.Grit.Cast();
             }
 
             return false;
@@ -406,7 +406,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SafeguardPVP()
         {
-            if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415))
+            if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) ||
+                Managers.BeingWatched() && Managers.HeavyMedal())
             {
                 return await MySpells.Adventurer.Safeguard.Cast();
             }
@@ -416,7 +417,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> RecuperatePVP()
         {
-            if (Core.Player.CurrentHealthPercent < 40)
+            if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
             {
                 return await MySpells.Adventurer.Recuperate.Cast();
             }

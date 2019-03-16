@@ -70,8 +70,8 @@
         {
             Name = "Tomahawk",
             ID = 8764,
-            GCDType = GCDType.On,
-            SpellType = SpellType.Damage,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Cooldown,
             CastType = CastType.Target
         };
 

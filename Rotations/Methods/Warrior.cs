@@ -373,10 +373,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TomahawkPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                (eu.IsMelee() || eu.IsTank()) && eu.Distance(Core.Player) < 15 &&
-                eu.Distance(eu.TargetGameObject) > 6 &&
-                !eu.HasAura(1350) || eu.HasAura(396));
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.Distance(Core.Player) < 15 &&
+                (eu.IsMelee() || eu.IsTank()) && (eu.HasTarget && eu.Distance(eu.TargetGameObject) > 6 &&
+                !eu.HasAura(1350) || eu.HasAura(396)) || eu.CurrentHealth < 500);
             if (target != null)
             {
                 return await MySpells.PVP.Tomahawk.Cast(target);
@@ -388,7 +387,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> HolmgangPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 ||
+                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 && !eu.HasAura(1455) ||
                 Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 10);
             if (target != null)
             {
@@ -415,7 +414,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SafeguardPVP()
         {
-            if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415))
+            if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) || 
+                Managers.BeingWatched() && Managers.HeavyMedal())
             {
                 return await MySpells.Adventurer.Safeguard.Cast();
             }
@@ -425,7 +425,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> RecuperatePVP()
         {
-            if (Core.Player.CurrentHealthPercent < 40)
+            if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
             {
                 return await MySpells.Adventurer.Recuperate.Cast();
             }
@@ -435,10 +435,9 @@ namespace ShinraCo.Rotations
 
         //private async Task<bool> DefiancePVP()
         //{
-        //    if (PVPDeliveranceStance && (Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
-        //        PVPDefianceStance && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 95) 
+        //    if (PVPDeliveranceStance && Managers.BeingWatched())
         //    {
-        //        return await MySpells.Defiance.Cast();
+        //        return await MySpells.PVP.Defiance.Cast();
         //    }
 
         //    return false;

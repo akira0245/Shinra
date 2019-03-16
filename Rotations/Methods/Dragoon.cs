@@ -337,10 +337,13 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> JumpPVP()
         {
-            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.CurrentTP >= 630 
+            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 3 && Core.Player.CurrentTP >= 630
+                && (ActionManager.LastSpell.Name != MySpells.PVP.FullThrust.Name ||
+                    ActionManager.LastSpell.Name != MySpells.PVP.ChaosThrust.Name)
                 ||
                 Core.Player.CurrentTarget.CurrentHealth < 2000 && !Core.Player.CurrentTarget.HasAura(1304) &&
-                !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "木人")
+                !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "木人" &&
+                Core.Player.CurrentTarget.Name != "奋战补给箱")
             {
                 return await MySpells.PVP.Jump.Cast();
             }
@@ -350,7 +353,9 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> SpineshatterDivePVP()
         {
-            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.TargetDistance(5, false) 
+            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.TargetDistance(3, false) 
+                && (ActionManager.LastSpell.Name != MySpells.PVP.FullThrust.Name ||
+                ActionManager.LastSpell.Name != MySpells.PVP.ChaosThrust.Name)
                 ||
                  Core.Player.CurrentTarget.CurrentHealth < 1125 && !Core.Player.CurrentTarget.HasAura(1304) &&
                 !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "奋战补给箱" &&

@@ -109,10 +109,10 @@ namespace ShinraCo.Rotations
         {
             if (await RecuperatePVP()) return true;
             if (await SafeguardPVP()) return true;
+            if (await GritPVP()) return true;
             if (await UnmendPVP()) return true;
             if (await LowBlowPVP()) return true;
             if (await TheBlackestNightPVP()) return true;
-            if (await GritPVP()) return true;
             if (await BloodspillerPVP()) return true;
             if (await PowerSlashPVP()) return true;
             return await SouleaterPVP();

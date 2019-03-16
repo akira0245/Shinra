@@ -56,7 +56,12 @@ namespace ShinraCo
 
         public static bool HeavyMedal()
         {
-            return Core.Player.HasAura(1501) || Core.Player.HasAura(1502);
+            return Core.Player.HasAura(1500) || Core.Player.HasAura(1501) || Core.Player.HasAura(1502);
+        }
+
+        public static bool BeingWatched()
+        {
+            return Helpers.EnemyUnit.Count(eu => eu.HasTarget && eu.TargetGameObject.IsMe) > 2;
         }
     }
 }
