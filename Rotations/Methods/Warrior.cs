@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Linq;
 using ff14bot;
+using ff14bot.Enums;
 using ff14bot.Managers;
 using ShinraCo.Settings;
 using ShinraCo.Spells.Main;
@@ -389,7 +390,8 @@ namespace ShinraCo.Rotations
         private async Task<bool> HolmgangPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 && !eu.HasAura(1455) ||
+                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 &&
+                eu.CurrentJob != ClassJobType.Machinist && eu.CurrentJob != ClassJobType.Bard ||
                 Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 10);
             if (target != null)
             {

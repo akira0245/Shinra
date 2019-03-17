@@ -85,5 +85,32 @@
             SpellType = SpellType.Buff,
             CastType = CastType.Self
         };
+
+        public Spell BluntArrow { get; } = new Spell
+        {
+            Name = "Blunt Arrow",
+            ID = 9626,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Cooldown,
+            CastType = CastType.Target
+        };
+
+        public Spell Barrage { get; } = new Spell
+        {
+            Name = "Barrage",
+            ID = 9625,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Buff,
+            CastType = CastType.Self
+        };
+
+        public Spell RepellingShot { get; } = new Spell
+        {
+            Name = "Repelling Shot",
+            ID = 9625,
+            GCDType = GCDType.Off,
+            SpellType = SpellType.Cooldown,
+            CastType = CastType.Target
+        };
     }
 }

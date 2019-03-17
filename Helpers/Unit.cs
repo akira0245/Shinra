@@ -37,7 +37,7 @@ namespace ShinraCo
                 : cp.Distance2D(unit) - cp.CombatReach - unit.CombatReach <= range;
         }
 
-        private static bool IsEnemy(this BattleCharacter ie)
+        public static bool IsEnemy(this BattleCharacter ie)
         {
             return GameObjectManager.Attackers.Contains(ie) && ie.IsAlive && ie.CanAttack && ie.IsTargetable;
         }
