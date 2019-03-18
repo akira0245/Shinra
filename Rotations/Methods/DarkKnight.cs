@@ -376,7 +376,7 @@ namespace ShinraCo.Rotations
             var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsStunableSpell() || eu.HasAura(396));
             if (target != null)
             {
-                return await MySpells.PVP.LowBlow.Cast(target);
+                return await MySpells.PVP.LowBlow.Cast(target, false);
             }
 
             return false;
@@ -395,8 +395,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> GritPVP()
         {
-            if (!Grited && (Managers.BeingWatched() || Core.Player.CurrentHealthPercent < 70 || Managers.HeavyMedal()) ||
-                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Managers.BeingWatched())
+            if (!Grited && (Core.Me.BeingWatched() || Core.Player.CurrentHealthPercent < 75 || Managers.HeavyMedal()) ||
+                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Core.Me.BeingWatched())
             {
                 return await MySpells.PVP.Grit.Cast();
             }
@@ -407,7 +407,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> SafeguardPVP()
         {
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) ||
-                Managers.BeingWatched() && Managers.HeavyMedal())
+                Core.Me.BeingWatched() && Managers.HeavyMedal())
             {
                 return await MySpells.Adventurer.Safeguard.Cast();
             }
@@ -419,7 +419,7 @@ namespace ShinraCo.Rotations
         {
             if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
             {
-                return await MySpells.Adventurer.Recuperate.Cast();
+                return await MySpells.Adventurer.Recuperate.Cast(null, false);
             }
 
             return false;

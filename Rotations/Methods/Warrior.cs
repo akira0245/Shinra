@@ -419,7 +419,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> SafeguardPVP()
         {
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) || 
-                Managers.BeingWatched() && Managers.HeavyMedal())
+                Core.Player.BeingWatched() && Managers.HeavyMedal())
             {
                 return await MySpells.Adventurer.Safeguard.Cast();
             }
@@ -439,7 +439,7 @@ namespace ShinraCo.Rotations
 
         //private async Task<bool> DefiancePVP()
         //{
-        //    if (PVPDeliveranceStance && Managers.BeingWatched())
+        //    if (PVPDeliveranceStance && Core.Me.BeingWatched())
         //    {
         //        return await MySpells.PVP.Defiance.Cast();
         //    }
