@@ -399,7 +399,7 @@ namespace ShinraCo.Rotations
         {
             var alternativeDotTarget = Managers.AlternativeTarget.FirstOrDefault(em =>
                 em.Distance(Core.Me) < 25 && ((!em.HasAura("Caustic Bite", true, 3000) || !em.HasAura("Stormbite", true, 3000))
-                                              && (MinuetActive && NumRepertoire == 3 || !MinuetActive) ||
+                                              && (MinuetActive && NumRepertoire == 3 || NoSong) ||
                                               (!em.HasAura("Caustic Bite", true, 2000) || !em.HasAura("Stormbite", true, 2000))
                                               && PaeonActive && NumRepertoire == 4));
 
