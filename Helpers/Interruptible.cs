@@ -14,9 +14,10 @@ namespace ShinraCo
         {
             var unitAsCharacter = unit as Character;
             if (unitAsCharacter == null) return false;
-            return unitAsCharacter.IsCasting && StunableSpellIds.Contains(unitAsCharacter.CastingSpellId) &&
+            return (unitAsCharacter.IsCasting && StunableSpellIds.Contains(unitAsCharacter.CastingSpellId) ||
+                    unitAsCharacter.HasAura(1455) || unitAsCharacter.HasAura(1413) || unitAsCharacter.HasAura(1325)) &&
                    !unitAsCharacter.HasAura(1349)
-                   || unitAsCharacter.HasAura(1455) || unitAsCharacter.HasAura(1413) || unitAsCharacter.HasAura(1325);
+                   ;
         }
 
         public static bool IsLimitBreaking(this GameObject unit)
@@ -29,7 +30,7 @@ namespace ShinraCo
 
         private static readonly HashSet<uint> StunableSpellIds = new HashSet<uint>
         {
-            3360, 3361, 4249, 8831, 7422, 8866
+            3360, 3361, 4249, 8831, 8865, 8866
         };
 
         private static readonly HashSet<uint> LimitBreakIds = new HashSet<uint>

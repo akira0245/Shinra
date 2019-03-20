@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
@@ -349,6 +350,12 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BloodspillerPVP()
         {
+            var almostKill = Helpers.EnemyUnit.Any(em => em.CurrentHealthPercent < 60 && 
+                                                         em.Name != "奋战补给箱" && em.Name != "狼心");
+            var enemyhealer = Helpers.EnemyUnit.FirstOrDefault(em =>
+                em.IsHealer() && em.IsVisible && em.Distance(Core.Me) < 3 && (em.IsCasting || em.HasAura(1335)) &&
+                !em.HasAura(1353) && almostKill);
+
             if (Core.Player.CurrentTarget.CurrentHealth < 3000 &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "狼心" ||
@@ -357,12 +364,17 @@ namespace ShinraCo.Rotations
                 return await MySpells.PVP.Bloodspiller.Cast();
             }
 
+            if (enemyhealer != null)
+            {
+                return await MySpells.PVP.Bloodspiller.Cast(enemyhealer);
+            }
+
             return false;
         }
 
         private async Task<bool> TheBlackestNightPVP()
         {
-            var target = Managers.TheBlackestNightTarget.FirstOrDefault();
+            var target = TheBlackestNightTarget.FirstOrDefault();
             if (target != null)
             {
                 return await MySpells.PVP.TheBlackestNight.Cast(target, false);
@@ -373,7 +385,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> LowBlowPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsStunableSpell() || eu.HasAura(396));
+            var enemybursting = Managers.PartyMembers.Any(pm => pm.BeingWatched() && pm.CurrentHealthPercent < 70);
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu => 
+                eu.Distance(Core.Me) <= 3 && (eu.IsStunableSpell() || (eu.IsDPS() || eu.IsTank()) && enemybursting && 
+                                             !eu.HasAura(1349) || eu.HasAura(396)));
             if (target != null)
             {
                 return await MySpells.PVP.LowBlow.Cast(target, false);
@@ -384,8 +399,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> UnmendPVP()
         {
-            var target = Helpers.EnemyUnit.FirstOrDefault(eu => eu.IsLimitBreaking());
-            if (target != null && (target.HasAura(1349) || target.Distance() > 3))
+            var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
+                eu.IsLimitBreaking() &&
+                (eu.HasAura(1349) || eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 15));
+            if (target != null )
             {
                 return await MySpells.PVP.Unmend.Cast(target);
             }
@@ -395,8 +412,10 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> GritPVP()
         {
-            if (!Grited && (Core.Me.BeingWatched() || Core.Player.CurrentHealthPercent < 75 || Managers.HeavyMedal()) ||
-                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Core.Me.BeingWatched())
+            if (!Grited && (Core.Player.BeingWatched() || Core.Player.CurrentHealthPercent < 75 || Managers.HeavyMedal()
+                            || Core.Player.HasAura(994)) ||
+                Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Core.Player.BeingWatched() 
+                            && !Core.Player.HasAura(994))
             {
                 return await MySpells.PVP.Grit.Cast();
             }
@@ -407,9 +426,9 @@ namespace ShinraCo.Rotations
         private async Task<bool> SafeguardPVP()
         {
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) ||
-                Core.Me.BeingWatched() && Managers.HeavyMedal())
+                Core.Player.BeingWatched() && Managers.HeavyMedal())
             {
-                return await MySpells.Adventurer.Safeguard.Cast();
+                return await MySpells.Adventurer.Safeguard.Cast(null, false);
             }
 
             return false;
@@ -431,6 +450,10 @@ namespace ShinraCo.Rotations
 
         private static int BloodValue => Resource.BlackBlood;
         private static bool Grited => Core.Player.HasAura(1397);
+        private static IEnumerable<BattleCharacter> TheBlackestNightTarget => Managers.PartyMembers.Where(pm =>
+                (pm.CurrentHealthPercent < 65 || pm.BeingWatched()) && pm.IsAlive && pm.Distance(Core.Player) < 30)
+            .OrderByDescending(Importance);
+        private static int Importance(BattleCharacter c) => c.IsHealer() ? 60 : c.IsDPS() ? 40 : c.IsTank() ? 20 : 0;
 
         #endregion
     }

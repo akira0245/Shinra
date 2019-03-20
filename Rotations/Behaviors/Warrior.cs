@@ -132,7 +132,7 @@ namespace ShinraCo.Rotations
             if (await HolmgangPVP()) return true;
             if (await TomahawkPVP()) return true;
             if (await OnslaughtPVP()) return true;
-            //if (await DefiancePVP()) return true;
+            if (await DefiancePVP()) return true;
             if (await ThrillofWarPVP()) return true;
             if (await FellCleavePVP()) return true;
             if (await ButchersBlockPVP()) return true; 

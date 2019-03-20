@@ -51,26 +51,14 @@ namespace ShinraCo
             return Helpers.EnemyUnit.Count(eu => eu.HasTarget && eu.TargetGameObject == c) > 2;
         }
 
-        public static IEnumerable<BattleCharacter> TheBlackestNightTarget
-        {
-            get
-            {
-                return PartyMembers.Where(pm => 
-                    (pm.CurrentHealthPercent < 65 || pm.BeingWatched()) && pm.IsAlive && pm.Distance(Core.Player) < 30)
-                    .OrderByDescending(Importance);
-            }
-        }
 
-        private static int Importance(BattleCharacter c)
-        {
-            return c.IsHealer() ? 60 : c.IsDPS() ? 40 : c.IsTank() ? 20 : 0;
-        }
 
         public static IEnumerable<BattleCharacter> AlternativeTarget
         {
             get
             {
-                return GameObjectManager.GetObjectsOfType<BattleCharacter>(true).Where(eu => eu.IsVisible && eu.IsEnemy())
+                return GameObjectManager.GetObjectsOfType<BattleCharacter>(true)
+                    .Where(eu => eu.IsVisible && eu.IsEnemy())
                     .OrderByDescending(DamageAdjustment);
             }
         }

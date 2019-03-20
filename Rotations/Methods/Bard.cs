@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Buddy.Coroutines;
 using ff14bot;
@@ -396,25 +397,26 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> StormbitePVP()
         {
-            var alternativeDotTarget = Managers.AlternativeTarget.FirstOrDefault(em => !em.Equals(Me.CurrentTarget) &&
-                (!em.HasAura("Caustic Bite", true, 4000) || !em.HasAura("Stormbite", true, 4000)));
+            var alternativeDotTarget = Managers.AlternativeTarget.FirstOrDefault(em =>
+                em.Distance(Core.Me) < 25 && ((!em.HasAura("Caustic Bite", true, 3000) || !em.HasAura("Stormbite", true, 3000))
+                                              && (MinuetActive && NumRepertoire == 3 || !MinuetActive) ||
+                                              (!em.HasAura("Caustic Bite", true, 2000) || !em.HasAura("Stormbite", true, 2000))
+                                              && PaeonActive && NumRepertoire == 4));
 
-            if (!(PaeonActive && (!(MySpells.PVP.Barrage.Cooldown() > 0) || MySpells.PVP.Barrage.Cooldown() > 13500) 
-                  && ActionManager.LastSpell.Name == MySpells.PVP.HeavyShot.Name)
+            if (!(PaeonActive && (Math.Abs(MySpells.PVP.Barrage.Cooldown()) < 1 || Core.Player.HasAura(MySpells.PVP.Barrage.Name)) 
+                  && ActionManager.LastSpell.Name == MySpells.PVP.HeavyShot.Name) &&
+                !(MinuetActive && NumRepertoire == 2 && ActionManager.LastSpell.Name == MySpells.PVP.HeavyShot.Name)
                 && (Core.Player.CurrentTarget.Name != "奋战补给箱" || Core.Player.CurrentTarget.Name == "奋战补给箱" &&
                  Core.Player.CurrentTarget.CurrentHealthPercent > 70) &&
                 (Core.Player.CurrentTarget.Name != "狼心" || Core.Player.CurrentTarget.Name == "狼心" &&
                  Core.Player.CurrentTarget.CurrentHealthPercent > 70))
             {
-                if (!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 4000) ||
-                    !Core.Player.CurrentTarget.HasAura("Stormbite", true, 4000))
+                if (!Core.Player.CurrentTarget.HasAura("Caustic Bite", true, 3000) ||
+                    !Core.Player.CurrentTarget.HasAura("Stormbite", true, 3000))
                 {
                     return await MySpells.PVP.Stormbite.Cast();
                 }
-                else if (alternativeDotTarget != null && 
-                         (MinuetActive && NumRepertoire == 3 || 
-                         PaeonActive && MySpells.PVP.Barrage.Cooldown() > 0 && MySpells.PVP.Barrage.Cooldown() < 13500 
-                         && ActionManager.LastSpell.Name == MySpells.PVP.HeavyShot.Name && NumRepertoire == 4))
+                else if (alternativeDotTarget != null)
                 {
                     return await MySpells.PVP.Stormbite.Cast(alternativeDotTarget);
                 }
@@ -441,7 +443,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> EmpyrealArrowPVP()
         {
             if (Core.Player.HasAura(MySpells.Barrage.Name) || Core.Player.CurrentTarget.CurrentHealth < 1450 ||
-                !(PaeonActive && (!(MySpells.PVP.Barrage.Cooldown() > 0) || MySpells.PVP.Barrage.Cooldown() > 10000))
+                !(PaeonActive && MySpells.PVP.Barrage.Cooldown() < 5000)
                 && Core.Player.CurrentTP > 930)
             {
                 return await MySpells.PVP.EmpyrealArrow.Cast();
@@ -454,7 +456,7 @@ namespace ShinraCo.Rotations
         {
             if (NoSong || MinuetActive && (NumRepertoire == 3 && Core.Player.CurrentTarget.CurrentHealth < 4000 ||
                                            NumRepertoire == 2 && Core.Player.CurrentTarget.CurrentHealth < 1600 ||
-                                           NumRepertoire == 1 && Core.Player.CurrentTarget.CurrentHealth < 900 ) 
+                                           NumRepertoire == 1 && Core.Player.CurrentTarget.CurrentHealth < 850 ) 
                                        && Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "木人" ||
                                            MinuetActive && SongTimer < 3000)
             {
@@ -476,7 +478,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> ArmysPaeonPVP()
         {
-            if (NoSong && MySpells.PVP.Bloodletter.Cooldown() > 0 && MySpells.PVP.Bloodletter.Cooldown() < 14500)
+            if (NoSong && MySpells.PVP.Bloodletter.Cooldown() > 0 && MySpells.PVP.Bloodletter.Cooldown() < 14000)
             {
                 return await MySpells.PVP.ArmysPaeon.Cast();
             }
@@ -486,7 +488,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> TroubadourPVP()
         {
-            var bursting = Managers.PartyMembers.Any(pm => pm.HasAura(1453) || pm.HasAura(1303) || pm.HasAura(1413));
+            //var bursting = Managers.PartyMembers.Any(pm => pm.HasAura(1453) || pm.HasAura(1303) || pm.HasAura(1413));
 
             if (MinuetActive)
             {
@@ -499,11 +501,12 @@ namespace ShinraCo.Rotations
         private async Task<bool> BluntArrowPVP()
         {
             var almostKill = Helpers.EnemyUnit.Any(em => em.CurrentHealthPercent < 50);
-            var target = Helpers.EnemyUnit.FirstOrDefault(em =>
-                em.IsHealer() && (em.IsCasting || em.HasAura(1335)) && !em.HasAura(1353));
-            if (target != null && almostKill)
+            var target = Helpers.EnemyUnit.FirstOrDefault(em => 
+                em.IsHealer() && em.IsVisible && em.Distance(Core.Me) < 25 && (em.IsCasting || em.HasAura(1335)) &&
+                !em.HasAura(1353) && almostKill);
+            if (target != null)
             {
-                return await MySpells.PVP.BluntArrow.Cast(target);
+                return await MySpells.PVP.BluntArrow.Cast(target, false);
             }
 
             return false;
@@ -512,10 +515,10 @@ namespace ShinraCo.Rotations
         private async Task<bool> RepellingShotPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(em =>
-                (em.IsMelee() || em.IsTank()) && !em.HasAura(1351) && em.Distance(Core.Player) < 5 && Core.Me.BeingWatched());
+                (em.IsMelee() || em.IsTank()) && !em.HasAura(1351) && em.Distance(Core.Me) < 5 && Core.Player.BeingWatched());
             if (target != null)
             {
-                return await MySpells.PVP.BluntArrow.Cast(target);
+                return await MySpells.PVP.RepellingShot.Cast(target);
             }
 
             return false;
@@ -524,7 +527,8 @@ namespace ShinraCo.Rotations
         private async Task<bool> SafeguardPVP()
         {
             if (Core.Player.CurrentHealthPercent < 70 && !Core.Player.HasAura(1415) ||
-                Core.Me.BeingWatched() && Managers.HeavyMedal())
+                Core.Player.BeingWatched() && Managers.HeavyMedal() ||
+                Core.Player.BeingWatched() && Core.Player.CurrentHealthPercent < 75) 
             {
                 return await MySpells.Adventurer.Safeguard.Cast();
             }
@@ -534,7 +538,7 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> RecuperatePVP()
         {
-            if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
+            if (Core.Player.CurrentHealthPercent < 50 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 70)
             {
                 return await MySpells.Adventurer.Recuperate.Cast();
             }

@@ -3,6 +3,7 @@ using System.Linq;
 using ff14bot;
 using ff14bot.Enums;
 using ff14bot.Managers;
+using ff14bot.Objects;
 using ShinraCo.Settings;
 using ShinraCo.Spells.Main;
 using Resource = ff14bot.Managers.ActionResourceManager.Warrior;
@@ -349,7 +350,7 @@ namespace ShinraCo.Rotations
                 Core.Player.CurrentTarget.Name != "木人" || Resource.BeastGauge == 100 ||
                 Core.Player.CurrentTarget.HasAura(1343) ||
                 Resource.BeastGauge == 90 && ActionManager.LastSpell.Name == MySpells.PVP.Maim.Name
-                || PVPDefianceStance && Core.Player.CurrentHealthPercent < 70 &&
+                || DefianceStancePVP && Core.Player.CurrentHealthPercent < 70 &&
                 !Core.Player.HasAura(1398, true, 2000) ||
                 Core.Player.HasAura(MySpells.PVP.InnerRelease.Name)) 
                 
@@ -366,7 +367,7 @@ namespace ShinraCo.Rotations
                 eu.IsLimitBreaking() && !eu.HasAura(1349) && eu.Distance(Core.Player) < 15);
             if (target != null)
             {
-                return await MySpells.PVP.Onslaught.Cast(target);
+                return await MySpells.PVP.Onslaught.Cast(target, false);
             }
 
             return false;
@@ -395,7 +396,7 @@ namespace ShinraCo.Rotations
                 Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 10);
             if (target != null)
             {
-                return await MySpells.PVP.Holmgang.Cast(target);
+                return await MySpells.PVP.Holmgang.Cast(target, false);
             }
 
             return false;
@@ -421,7 +422,7 @@ namespace ShinraCo.Rotations
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) || 
                 Core.Player.BeingWatched() && Managers.HeavyMedal())
             {
-                return await MySpells.Adventurer.Safeguard.Cast();
+                return await MySpells.Adventurer.Safeguard.Cast(null, false);
             }
 
             return false;
@@ -431,21 +432,21 @@ namespace ShinraCo.Rotations
         {
             if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
             {
-                return await MySpells.Adventurer.Recuperate.Cast();
+                return await MySpells.Adventurer.Recuperate.Cast(null, false);
             }
 
             return false;
         }
 
-        //private async Task<bool> DefiancePVP()
-        //{
-        //    if (PVPDeliveranceStance && Core.Me.BeingWatched())
-        //    {
-        //        return await MySpells.PVP.Defiance.Cast();
-        //    }
+        private async Task<bool> DefiancePVP()
+        {
+            if (DeliveranceStancePVP && Core.Player.BeingWatched())
+            {
+                return await MySpells.PVP.Defiance.Cast();
+            }
 
-        //    return false;
-        //}
+            return false;
+        }
 
         #endregion
 
@@ -454,8 +455,8 @@ namespace ShinraCo.Rotations
         private static int BeastDeficit => 100 - Resource.BeastGauge;
         private static bool DefianceStance => Core.Player.HasAura(91);
         private static bool DeliveranceStance => Core.Player.HasAura(729);
-        private static bool PVPDefianceStance => Core.Player.HasAura(1396);
-        private static bool PVPDeliveranceStance => !Core.Player.HasAura(1396);
+        private static bool DefianceStancePVP => Core.Player.HasAura(1396);
+        private static bool DeliveranceStancePVP => !Core.Player.HasAura(1396);
         private static bool HeavySwingNext => ActionManager.LastSpellId == 42 || ActionManager.LastSpellId == 45 || 
                                               ActionManager.LastSpellId == 47;
 
