@@ -500,13 +500,14 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> BluntArrowPVP()
         {
-            var almostKill = Helpers.EnemyUnit.Any(em => em.CurrentHealthPercent < 50);
-            var target = Helpers.EnemyUnit.FirstOrDefault(em => 
+            var almostKill = Helpers.EnemyUnit.Any(em => em.CurrentHealthPercent < 50 && em.Name != "奋战补给箱" &&
+                                                         em.Name != "木人");
+            var enemyhealer = Helpers.EnemyUnit.FirstOrDefault(em => 
                 em.IsHealer() && em.IsVisible && em.Distance(Core.Me) < 25 && (em.IsCasting || em.HasAura(1335)) &&
                 !em.HasAura(1353) && almostKill);
-            if (target != null)
+            if (enemyhealer != null)
             {
-                return await MySpells.PVP.BluntArrow.Cast(target, false);
+                return await MySpells.PVP.BluntArrow.Cast(enemyhealer, false);
             }
 
             return false;
@@ -524,7 +525,7 @@ namespace ShinraCo.Rotations
             return false;
         }
 
-        private async Task<bool> SafeguardPVP()
+        private async Task<bool> Safeguard()
         {
             if (Core.Player.CurrentHealthPercent < 70 && !Core.Player.HasAura(1415) ||
                 Core.Player.BeingWatched() && Managers.HeavyMedal() ||
@@ -536,7 +537,7 @@ namespace ShinraCo.Rotations
             return false;
         }
 
-        private async Task<bool> RecuperatePVP()
+        private async Task<bool> Recuperate()
         {
             if (Core.Player.CurrentHealthPercent < 50 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 70)
             {

@@ -423,7 +423,7 @@ namespace ShinraCo.Rotations
             return false;
         }
 
-        private async Task<bool> SafeguardPVP()
+        private async Task<bool> Safeguard()
         {
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) ||
                 Core.Player.BeingWatched() && Managers.HeavyMedal())
@@ -434,7 +434,7 @@ namespace ShinraCo.Rotations
             return false;
         }
 
-        private async Task<bool> RecuperatePVP()
+        private async Task<bool> Recuperate()
         {
             if (Core.Player.CurrentHealthPercent < 40 || Managers.HeavyMedal() && Core.Player.CurrentHealthPercent < 60)
             {

@@ -88,9 +88,9 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
-            if (await RecuperatePVP()) return true;
+            if (await Recuperate()) return true;
+            if (await Safeguard()) return true;
             if (await RepellingShotPVP()) return true;
-            if (await SafeguardPVP()) return true;
             if (await BluntArrowPVP()) return true;
             if (await SidewinderPVP()) return true;
             if (await BloodletterPVP()) return true;

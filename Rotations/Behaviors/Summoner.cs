@@ -95,10 +95,15 @@ namespace ShinraCo.Rotations
 
         public override async Task<bool> CombatPVP()
         {
+            if (await Safeguard()) return true;
             if (await DeathflarePVP()) return true;
-            if (await EnergyDrainPVP()) return true;
-            if (await FesterPVP()) return true;
             if (await WitherPVP()) return true;
+            if (await EnergyDrainPVP()) return true;
+            //if (await FesterPVP()) return true;
+            if (await MiasmaIIIPVP()) return true;
+            if (await BioIIIPVP()) return true;
+            if (await AetherflowPVP()) return true;
+            if (await Muse()) return true;
             return await RuinIIIPVP();
         }
 

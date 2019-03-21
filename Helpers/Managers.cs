@@ -58,7 +58,7 @@ namespace ShinraCo
             get
             {
                 return GameObjectManager.GetObjectsOfType<BattleCharacter>(true)
-                    .Where(eu => eu.IsVisible && eu.IsEnemy())
+                    .Where(eu => eu.IsVisible && eu.Distance(Core.Player) < 25 && eu.IsEnemy())
                     .OrderByDescending(DamageAdjustment);
             }
         }
