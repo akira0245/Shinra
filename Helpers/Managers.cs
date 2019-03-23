@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ff14bot;
 using ff14bot.Enums;
+using ff14bot.Helpers;
 using ff14bot.Managers;
 using ff14bot.Objects;
 
@@ -51,16 +53,14 @@ namespace ShinraCo
             return Helpers.EnemyUnit.Count(eu => eu.HasTarget && eu.TargetGameObject == c) > 2;
         }
 
-
-
         public static IEnumerable<BattleCharacter> AlternativeTarget
         {
             get
             {
                 return GameObjectManager.GetObjectsOfType<BattleCharacter>(true)
-                    .Where(eu => eu.IsVisible && eu.Distance(Core.Player) < 25 && eu.IsEnemy())
+                    .Where(eu => eu.IsVisible && eu.Distance(Core.Player) < 25 && eu.IsEnemy() && eu.IsAliveEnemyOrDummy())
                     .OrderByDescending(DamageAdjustment);
-            }
+                }
         }
 
         private static float MedalsAdjustment(this GameObject unit)
@@ -83,18 +83,33 @@ namespace ShinraCo
             var c = unit as Character;
             float adjust = 1;
             return c.HasAura(1415) ? adjust * 0.75F :
-                c.HasAura(1395) ? adjust * 0.8F :
-                c.HasAura(1396) ? adjust * 0.8F :
-                c.HasAura(1397) ? adjust * 0.8F :
-                c.HasAura(1329) ? adjust * 1.05F :
-                c.HasAura(1371) ? adjust * 1.1F :
-                c.HasAura(1406) ? adjust * 1.05F :
-                c.HasAura(1408) ? adjust * 1.25F :
-                c.HasAura(655) ? adjust * 0.75F :
                 c.HasAura(397) ? adjust * 0.75F :
+                c.HasAura(1371) ? adjust * 1.1F :
+                c.HasAura(655) ? adjust * 0.75F :
+                c.HasAura(1329) ? adjust * 1.05F :
+                c.HasAura(1406) ? adjust * 1.05F :
                 adjust;
         }
 
+        private static float TankStanceAdjustment(this GameObject unit)
+        {
+            var c = unit as Character;
+            float adjust = 1;
+            return 
+                c.HasAura(1395) ? adjust * 0.8F :
+                c.HasAura(1396) ? adjust * 0.8F :
+                c.HasAura(1397) ? adjust * 0.8F : adjust;
+        }
+
+
+        private static float LimitBreakAdjustment(this GameObject unit)
+        {
+            var c = unit as Character;
+            float adjust = 1;
+            return
+                c.HasAura(1408) ? adjust * 1.25F :
+                c.HasAura(1409) ? adjust * 1.15F : adjust;
+        }
         private static float RoleAdjustment(this GameObject unit)
         {
             var c = unit as Character;
@@ -114,12 +129,30 @@ namespace ShinraCo
 
         private static float DamageAdjustment(this GameObject unit)
         {
-            return unit.StatusAdjustment() * unit.MedalsAdjustment() * unit.RoleAdjustment();
+            //Logging.Write(Core.Player.CurrentTarget.StatusAdjustment().ToString(),
+            //    Core.Player.CurrentTarget.MedalsAdjustment().ToString(),
+            //    Core.Player.CurrentTarget.RoleAdjustment().ToString());
+            return unit.StatusAdjustment() * unit.MedalsAdjustment() * unit.RoleAdjustment() * unit.TankStanceAdjustment()
+                * unit.LimitBreakAdjustment();
         }
 
         //public static float RealHealth(this GameObject unit)
         //{
         //    return unit.CurrentHealth * unit.DamageAdjustment();
         //}
+
+        public static bool IsAliveEnemy(this GameObject o)
+        {
+            return o.Name != "木人" && o.Name != "奋战补给箱" && o.Name != "狼心";
+        }
+        public static bool IsAliveEnemyOrDummy(this GameObject o)
+        {
+            return o.Name != "奋战补给箱" && o.Name != "狼心";
+        }
+
+        public static bool IsDummy(this GameObject o)
+        {
+            return o.Name != "木人";
+        }
     }
 }

@@ -6,6 +6,7 @@ using Buddy.Coroutines;
 using ff14bot;
 using ff14bot.Helpers;
 using ff14bot.Managers;
+using ff14bot.Objects;
 using ShinraCo.Settings;
 using ShinraCo.Spells;
 using ShinraCo.Spells.Main;
@@ -485,81 +486,59 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> RuinIIIPVP()
         {
-            if (!Resource.DreadwyrmTrance || RecentBahamut || Resource.DreadwyrmTrance && !MovementManager.IsMoving)
-            {
-                return await MySpells.PVP.RuinIII.Cast();
-            }
-            return false;
+            return await MySpells.PVP.RuinIII.Cast();
         }
 
         private async Task<bool> BioIIIPVP()
         {
-            var alterTarget = Managers.AlternativeTarget.FirstOrDefault(t => 
-                !t.Equals(Core.Player.CurrentTarget) &&t.Name != "奋战补给箱" && t.Name != "狼心");
-
             if (!Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) &&
-                !(Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true) && 
-                  Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true) &&
-                    (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 5000) ||
-                  Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 5000) &&
-                  MySpells.PVP.Wither.Cooldown() <= 0) &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "狼心"))
-            {
+                Core.Player.CurrentTarget.IsAliveEnemyOrDummy())
                 return await MySpells.PVP.BioIII.Cast();
-            }
 
-            if (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
-                Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) &&
-                !alterTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) &&
-                Core.Player.CurrentMana > 7000)
-            {
-                return await MySpells.PVP.BioIII.Cast(alterTarget);
-            }
+            var meleeTarget = Managers.PartyMembers.FirstOrDefault(pm => pm.IsMelee())?.TargetCharacter;
+            if (meleeTarget != null && meleeTarget.IsVisible && CurrentTargetFullDots() &&
+                !meleeTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) && meleeTarget.IsAliveEnemyOrDummy() && TooManyMana())
+                return await MySpells.PVP.BioIII.Cast(meleeTarget);
+
+            //var alterTargetS = Managers.AlternativeTarget.FirstOrDefault(t =>
+            //    !t.Equals(Core.Player.CurrentTarget) &&
+            //    t.Distance(Core.Me) < 25 && !t.HasAura(MySpells.PVP.BioIII.Name, true, 3000)
+            //    && t.Name != "奋战补给箱" && t.Name != "狼心");
+            //if (CurrentTargetFullDots() &&
+            //    (meleeTarget == null || !meleeTarget.IsVisible ||
+            //     meleeTarget.HasAura(MySpells.PVP.BioIII.Name, true, 4000) && TooManyMana()) &&
+            //    alterTargetS != null)
+            //    return await MySpells.PVP.MiasmaIII.Cast(alterTargetS);
+
             return false;
         }
 
         private async Task<bool> MiasmaIIIPVP()
         {
-            var alterTarget = Managers.AlternativeTarget.FirstOrDefault(t => 
-                !t.Equals(Core.Player.CurrentTarget) && 
-                t.Name != "奋战补给箱" && t.Name != "狼心");
-
-            var thirdTarget = Managers.AlternativeTarget.FirstOrDefault(t =>
-                !t.Equals(Core.Player.CurrentTarget) && !t.Equals(alterTarget) && 
-                t.Name != "奋战补给箱" && t.Name != "狼心");
-
+            //var thirdTarget = Managers.AlternativeTarget.FirstOrDefault(t =>
+            //    !t.Equals(Core.Player.CurrentTarget) && !t.Equals(alterTarget) &&
+            //    t.Name != "奋战补给箱" && t.Name != "狼心");
             if (MovementManager.IsMoving) return false;
 
             if (!Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
-                !(Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true) &&
-                  Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true) &&
-                  (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 5000) ||
-                   Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 5000) &&
-                   MySpells.PVP.Wither.Cooldown() <= 0) &&
-                Core.Player.CurrentTarget.Name != "奋战补给箱" && Core.Player.CurrentTarget.Name != "狼心"))
-            {
+                Core.Player.CurrentTarget.IsAliveEnemyOrDummy())
                 return await MySpells.PVP.MiasmaIII.Cast();
-            }
 
-            if (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
-                Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) &&
-                !alterTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000))
-            {
+            var meleeTarget = Managers.PartyMembers.FirstOrDefault(pm => pm.IsMelee())?.TargetCharacter;
+            if (CurrentTargetFullDots() && !Resource.DreadwyrmTrance && meleeTarget != null && meleeTarget.IsVisible &&
+                !meleeTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) && meleeTarget.IsAliveEnemyOrDummy())
+                return await MySpells.PVP.MiasmaIII.Cast(meleeTarget);
+
+            var alterTarget = Managers.AlternativeTarget.FirstOrDefault(t =>
+                !t.Equals(Core.Player.CurrentTarget) && !t.Equals(meleeTarget) && t.IsAliveEnemyOrDummy());
+            if (CurrentTargetFullDots() && !Resource.DreadwyrmTrance && 
+                (meleeTarget == null || !meleeTarget.IsVisible || 
+                 meleeTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) && TooManyMana()) && 
+                alterTarget != null && !alterTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000))
                 return await MySpells.PVP.MiasmaIII.Cast(alterTarget);
-            }
-
-            if (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
-                Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 3000) &&
-                alterTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
-                !thirdTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000)
-                && Core.Player.CurrentMana > 4500) 
-            {
-                return await MySpells.PVP.MiasmaIII.Cast(thirdTarget);
-            }
 
             return false;
         }
-
 
         private async Task<bool> WitherPVP()
         {
@@ -578,27 +557,33 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> EnergyDrainPVP()
         {
-            if ((Core.Player.CurrentMana < 7000 && MySpells.Adventurer.Muse.Cooldown() > 10000
-                && ResourceArcanist.Aetherflow == 3 || Core.Player.CurrentMana < 500)
-                                                 &&!ActionManager.CanCast(MySpells.PVP.SummonBahamut.Name, Core.Player))
+            if ((!TooManyMana() && ResourceArcanist.Aetherflow > 2 || Core.Player.CurrentMana < 3000)
+                && !ActionManager.CanCast(MySpells.PVP.SummonBahamut.Name, Core.Player))
             {
                 return await MySpells.PVP.EnergyDrain.Cast();
             }
             return false;
         }
 
-        private async Task<bool> DreadwyrmTrancePVP()
-        {
-            return await MySpells.PVP.DreadwyrmTrance.Cast();
-        }
+        //private async Task<bool> DreadwyrmTrancePVP()
+        //{
+        //    if (MySpells.PVP.Aetherflow.Cooldown() <= 0)
+        //    {
+        //        return await MySpells.PVP.DreadwyrmTrance.Cast();
+        //    }
+
+        //    return false;
+        //}
 
         private async Task<bool> FesterPVP()
         {
             if (Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true) &&
-                Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true)
-                && ResourceArcanist.Aetherflow == 3)
+                Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true) &&
+               (Core.Player.CurrentTarget.CurrentHealth < 2500 && Core.Player.CurrentTarget.IsAliveEnemy() || 
+                TooManyMana() && ResourceArcanist.Aetherflow > 2))
+                
             {
-                return await MySpells.PVP.Fester.Cast();
+                return await MySpells.PVP.Fester.Cast(null, false);
             }
             return false;
         }
@@ -614,19 +599,22 @@ namespace ShinraCo.Rotations
         
         private async Task<bool> DeathflarePVP()
         {
-            if (Resource.DreadwyrmTrance && Resource.Timer.TotalMilliseconds < 2000)
+            if (Resource.DreadwyrmTrance && Resource.Timer.TotalMilliseconds < 2000 )
             {
                 return await MySpells.PVP.Deathflare.Cast(null, false);
             }
+
+            //var wolfsheart = Helpers.EnemyUnit.FirstOrDefault(t => t.Name == "狼心");
+            //if (wolfsheart != null)
+            //{
+            //    return await MySpells.PVP.Deathflare.Cast(wolfsheart, false);
+            //}
             return false;
         }
 
         private async Task<bool> Muse()
         {
-            if (Core.Player.CurrentMana < 7000) 
-            {
-                return await MySpells.Adventurer.Muse.Cast(null,false);
-            }
+            if (Core.Player.CurrentMana < 7000) return await MySpells.Adventurer.Muse.Cast(null, false);
 
             return false;
         }
@@ -635,10 +623,10 @@ namespace ShinraCo.Rotations
         {
             if (Core.Player.CurrentHealthPercent < 65 && !Core.Player.HasAura(1415) ||
                 Core.Player.BeingWatched() && Managers.HeavyMedal() ||
+                Core.Player.BeingWatched() && Helpers.EnemyUnit.Count(em =>
+                    em.IsAliveEnemy() && em.Distance(Core.Me) < 5) > 1 ||
                 Core.Player.BeingWatched() && Core.Player.CurrentHealthPercent < 75)
-            {
                 return await MySpells.Adventurer.Safeguard.Cast(null, false);
-            }
 
             return false;
         }
@@ -687,6 +675,28 @@ namespace ShinraCo.Rotations
 
         private bool UseAddle => Shinra.Settings.SummonerAddle && RecentBahamut &&
                                  ActionManager.CanCast(MySpells.Role.Addle.Name, Core.Player.CurrentTarget);
+
+        //private bool WitherReady()
+        //{
+        //    return Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true) &&
+        //           Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true) &&
+        //           (Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 5000) ||
+        //            Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true, 5000) &&
+        //            MySpells.PVP.Wither.Cooldown() <= 0);
+        //}
+
+        private bool TooManyMana()
+        {
+            return Core.Player.CurrentMana > 7500 ||
+                   Core.Player.CurrentMana > 5500 && MySpells.PVP.Aetherflow.Cooldown() < 8000 ||
+                   Core.Player.CurrentMana > 5000 && MySpells.Adventurer.Muse.Cooldown() < 8000;
+        }
+
+        private bool CurrentTargetFullDots()
+        {
+            return Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true) &&
+                   Core.Player.CurrentTarget.HasAura(MySpells.PVP.BioIII.Name, true);
+        }
 
         #endregion
     }

@@ -376,7 +376,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> TomahawkPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.Distance(Core.Player) < 15 &&(eu.IsMelee() || eu.IsTank()) &&
+                eu.Distance(Core.Player) < 16 &&(eu.IsMelee() || eu.IsTank()) &&
                 (eu.HasTarget && eu.Distance(eu.TargetGameObject) > 6 &&
                  !eu.HasAura(1350) || eu.HasAura(396)) ||
                 eu.CurrentHealth < 500 && eu.Name != "木人" && eu.Name != "奋战补给箱");
@@ -391,9 +391,10 @@ namespace ShinraCo.Rotations
         private async Task<bool> HolmgangPVP()
         {
             var target = Helpers.EnemyUnit.FirstOrDefault(eu =>
-                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 10 &&
-                eu.CurrentJob != ClassJobType.Machinist && eu.CurrentJob != ClassJobType.Bard ||
-                Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 10);
+                eu.IsLimitBreaking() && eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 11 &&
+                eu.CurrentJob != ClassJobType.Machinist && eu.CurrentJob != ClassJobType.Bard && 
+                eu.HasAura(1349) ||
+                Core.Player.CurrentHealthPercent < 20 && eu.IsVisible && eu.Distance(Core.Player) < 11);
             if (target != null)
             {
                 return await MySpells.PVP.Holmgang.Cast(target, false);
@@ -411,7 +412,7 @@ namespace ShinraCo.Rotations
 
             if (partylowhealth || pmlowhealth)
             {
-                return await MySpells.PVP.ThrillofWar.Cast();
+                return await MySpells.PVP.ThrillofWar.Cast(null, false);
             }
 
             return false;

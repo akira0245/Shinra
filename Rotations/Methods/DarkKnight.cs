@@ -404,7 +404,7 @@ namespace ShinraCo.Rotations
                 (eu.HasAura(1349) || eu.Distance(Core.Player) > 3 && eu.Distance(Core.Player) < 15));
             if (target != null )
             {
-                return await MySpells.PVP.Unmend.Cast(target);
+                return await MySpells.PVP.Unmend.Cast(target, false);
             }
 
             return false;
@@ -417,7 +417,7 @@ namespace ShinraCo.Rotations
                 Grited && !Managers.HeavyMedal() && Core.Player.CurrentHealthPercent > 99 && !Core.Player.BeingWatched() 
                             && !Core.Player.HasAura(994))
             {
-                return await MySpells.PVP.Grit.Cast();
+                return await MySpells.PVP.Grit.Cast(null, false);
             }
 
             return false;
