@@ -486,7 +486,12 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> RuinIIIPVP()
         {
-            return await MySpells.PVP.RuinIII.Cast();
+            //if (!(Resource.DreadwyrmTrance && MovementManager.IsMoving) || RecentBahamut)
+            {
+                return await MySpells.PVP.RuinIII.Cast();
+            }
+
+            return false;
         }
 
         private async Task<bool> BioIIIPVP()
@@ -522,20 +527,26 @@ namespace ShinraCo.Rotations
 
             if (!Core.Player.CurrentTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) &&
                 Core.Player.CurrentTarget.IsAliveEnemyOrDummy())
+            {
                 return await MySpells.PVP.MiasmaIII.Cast();
+            }
 
             var meleeTarget = Managers.PartyMembers.FirstOrDefault(pm => pm.IsMelee())?.TargetCharacter;
             if (CurrentTargetFullDots() && !Resource.DreadwyrmTrance && meleeTarget != null && meleeTarget.IsVisible &&
                 !meleeTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) && meleeTarget.IsAliveEnemyOrDummy())
+            {
                 return await MySpells.PVP.MiasmaIII.Cast(meleeTarget);
+            }
 
             var alterTarget = Managers.AlternativeTarget.FirstOrDefault(t =>
-                !t.Equals(Core.Player.CurrentTarget) && !t.Equals(meleeTarget) && t.IsAliveEnemyOrDummy());
+                !t.Equals(Core.Player.CurrentTarget) && !t.Equals(meleeTarget));
             if (CurrentTargetFullDots() && !Resource.DreadwyrmTrance && 
                 (meleeTarget == null || !meleeTarget.IsVisible || 
                  meleeTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000) && TooManyMana()) && 
                 alterTarget != null && !alterTarget.HasAura(MySpells.PVP.MiasmaIII.Name, true, 4000))
+            {
                 return await MySpells.PVP.MiasmaIII.Cast(alterTarget);
+            }
 
             return false;
         }
@@ -599,7 +610,8 @@ namespace ShinraCo.Rotations
         
         private async Task<bool> DeathflarePVP()
         {
-            if (Resource.DreadwyrmTrance && Resource.Timer.TotalMilliseconds < 2000 )
+            if (Resource.DreadwyrmTrance && Resource.Timer.TotalMilliseconds < 2000 ||
+                Core.Player.CurrentTarget.CurrentHealth < 3000 && Core.Player.CurrentTarget.IsAliveEnemy()) 
             {
                 return await MySpells.PVP.Deathflare.Cast(null, false);
             }

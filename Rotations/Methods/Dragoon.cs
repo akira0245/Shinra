@@ -337,11 +337,8 @@ namespace ShinraCo.Rotations
 
         private async Task<bool> JumpPVP()
         {
-            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 3 && Core.Player.CurrentTP >= 630
-                && (ActionManager.LastSpell.Name != MySpells.PVP.FullThrust.Name ||
-                    ActionManager.LastSpell.Name != MySpells.PVP.ChaosThrust.Name ||
-                    ActionManager.LastSpell.Name != MySpells.PVP.SpineshatterDive.Name )
-                ||
+            if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 2 && Core.Player.CurrentTP >= 630
+                && !RecentJump ||
                 Core.Player.CurrentTarget.CurrentHealth < 2000 && !Core.Player.CurrentTarget.HasAura(1304) &&
                 !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "木人" &&
                 Core.Player.CurrentTarget.Name != "奋战补给箱")
@@ -355,10 +352,7 @@ namespace ShinraCo.Rotations
         private async Task<bool> SpineshatterDivePVP()
         {
             if (!MovementManager.IsMoving && BloodActive && Resource.DragonGaze < 3 && Core.Player.TargetDistance(3, false) 
-                && (ActionManager.LastSpell.Name != MySpells.PVP.FullThrust.Name ||
-                ActionManager.LastSpell.Name != MySpells.PVP.ChaosThrust.Name ||
-                ActionManager.LastSpell.Name != MySpells.PVP.Jump.Name)
-                    ||
+                && !RecentJump ||
                  Core.Player.CurrentTarget.CurrentHealth < 1125 && !Core.Player.CurrentTarget.HasAura(1304) &&
                 !Core.Player.CurrentTarget.HasAura(1302) && Core.Player.CurrentTarget.Name != "奋战补给箱" &&
                 Core.Player.CurrentTarget.Name != "木人")
@@ -447,7 +441,18 @@ namespace ShinraCo.Rotations
 
         #region Custom
 
-        private static bool RecentJump { get { return Spell.RecentSpell.Keys.Any(rs => rs.Contains("Dive") || rs.Contains("Jump")); } }
+        private static bool RecentJump
+        {
+            get
+            {
+                foreach (string rs in Spell.RecentSpell.Keys)
+                {
+                    if (rs.Contains("Dive") || rs.Contains("Jump")) return true;
+                }
+
+                return false;
+            }
+        }
         private static bool BloodActive => Resource.Timer != TimeSpan.Zero;
         private static double JumpCooldown => DataManager.GetSpellData(92).Cooldown.TotalSeconds;
         private static double SpineCooldown => DataManager.GetSpellData(95).Cooldown.TotalSeconds;

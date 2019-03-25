@@ -428,9 +428,9 @@ namespace ShinraCo.Rotations
         private async Task<bool> QuickReloadPVP()
         {
             if (!Core.Player.HasAura(MySpells.Flamethrower.Name) && Resource.GaussBarrel &&
-                (Resource.Ammo < 3 &&Resource.Heat >= 50 &&
+                (Resource.Ammo < 3 && Resource.Heat >= 50 &&
                  (Core.Player.CurrentTP >= 850 || Core.Player.CurrentTP >= 250 && Shinra.Settings.MachinistWildfire) 
-                 || Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name)))
+                 || Core.Player.CurrentTarget.HasAura(MySpells.Wildfire.Name, true)))
             {
                 return await MySpells.PVP.QuickReload.Cast();
             }
